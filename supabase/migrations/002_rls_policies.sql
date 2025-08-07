@@ -160,7 +160,7 @@ CREATE POLICY "Users can view pedido_itens of accessible pedidos" ON pedido_iten
 CREATE POLICY "Consumidores can create pedido_itens" ON pedido_itens
   FOR INSERT WITH CHECK (
     pedido_id IN (
-      SELECT id FROM pedidos p
+      SELECT p.id FROM pedidos p
       JOIN consumidores c ON p.consumidor_id = c.id
       WHERE c.profile_id = auth.uid()
     )
