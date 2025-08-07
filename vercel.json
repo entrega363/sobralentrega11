@@ -49,19 +49,5 @@
       "source": "/api/(.*)",
       "destination": "/api/$1"
     }
-  ],
-  "routes": [
-    {
-      "src": "/login",
-      "dest": "/login"
-    },
-    {
-      "src": "/register",
-      "dest": "/register"
-    },
-    {
-      "src": "/forgot-password",
-      "dest": "/forgot-password"
-    }
   ]
 }

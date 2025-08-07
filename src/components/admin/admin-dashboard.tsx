@@ -69,7 +69,7 @@ export function AdminDashboard() {
         <CardContent>
           <div className="space-y-4">
             <EmptyState
-              icon={Building2}
+              icon="🏢"
               title="Nenhuma empresa pendente"
               description="Todas as empresas foram processadas."
             />
@@ -91,7 +91,7 @@ export function AdminDashboard() {
         <CardContent>
           <div className="space-y-4">
             <EmptyState
-              icon={ShoppingCart}
+              icon="🛒"
               title="Nenhum pedido recente"
               description="Não há pedidos para exibir no momento."
             />

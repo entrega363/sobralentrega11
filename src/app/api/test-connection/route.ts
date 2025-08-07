@@ -1,9 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    const supabase = createClient()
+    const supabase = createRouteHandlerClient()
     
     // Test basic connection
     const { data, error } = await supabase
