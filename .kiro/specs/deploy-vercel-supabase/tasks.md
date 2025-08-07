@@ -105,6 +105,8 @@
   - Validar performance e Core Web Vitals
   - _Requisitos: 5.5, 8.4_
 
+
+
 - [ ] 13. Deploy e configuração final no Vercel
   - Configurar projeto no Vercel com settings otimizados
   - Configurar domínio customizado e certificado SSL
