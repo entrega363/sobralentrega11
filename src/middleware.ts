@@ -3,89 +3,60 @@ import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
-  // Update session
-  let response = await updateSession(request)
+  try {
+    // Update session
+    let response = await updateSession(request)
 
-  // Create Supabase client for middleware
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value
+    // Create Supabase client for middleware
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return request.cookies.get(name)?.value
+          },
+          set(name: string, value: string, options: any) {
+            response.cookies.set({ name, value, ...options })
+          },
+          remove(name: string, options: any) {
+            response.cookies.set({ name, value: '', ...options })
+          },
         },
-        set(name: string, value: string, options: any) {
-          response.cookies.set({ name, value, ...options })
-        },
-        remove(name: string, options: any) {
-          response.cookies.set({ name, value: '', ...options })
-        },
-      },
+      }
+    )
+
+    // Get session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    
+    if (sessionError) {
+      console.error('Session error:', sessionError)
+      return response
     }
-  )
 
-  // Get session
-  const { data: { session } } = await supabase.auth.getSession()
+    const pathname = request.nextUrl.pathname
 
-  // Protected routes configuration
-  const protectedRoutes = {
-    '/admin': ['admin'],
-    '/empresa': ['empresa'],
-    '/entregador': ['entregador'],
-    '/consumidor': ['consumidor'],
-  }
+    // Protected routes - only check authentication, not roles in middleware
+    const protectedRoutes = ['/admin', '/empresa', '/entregador', '/consumidor']
+    const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
 
-  const pathname = request.nextUrl.pathname
-
-  // Check if route needs protection
-  for (const [route, allowedRoles] of Object.entries(protectedRoutes)) {
-    if (pathname.startsWith(route)) {
+    if (isProtectedRoute) {
       // If not authenticated, redirect to login
       if (!session) {
         return NextResponse.redirect(new URL('/login', request.url))
       }
-
-      // Get user profile to check role
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single()
-
-      // If no profile or wrong role, redirect to login
-      if (!profile || !allowedRoles.includes(profile.role)) {
-        return NextResponse.redirect(new URL('/login', request.url))
-      }
     }
-  }
 
-  // Redirect authenticated users from auth pages
-  if (session && (pathname.startsWith('/login') || pathname.startsWith('/register'))) {
-    // Get user profile to redirect to correct dashboard
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
-
-    if (profile) {
-      const redirectPaths: Record<string, string> = {
-        admin: '/admin',
-        empresa: '/empresa',
-        entregador: '/entregador',
-        consumidor: '/consumidor',
-      }
-      
-      const redirectPath = redirectPaths[profile.role]
-
-      if (redirectPath) {
-        return NextResponse.redirect(new URL(redirectPath, request.url))
-      }
+    // Redirect authenticated users from auth pages to home
+    if (session && (pathname.startsWith('/login') || pathname.startsWith('/register'))) {
+      return NextResponse.redirect(new URL('/', request.url))
     }
-  }
 
-  return response
+    return response
+  } catch (error) {
+    console.error('Middleware error:', error)
+    return NextResponse.next()
+  }
 }
 
 export const config = {
