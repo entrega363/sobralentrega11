@@ -49,12 +49,15 @@
     - Add loading states and error handling
     - _Requirements: 2.1, 7.1, 7.2_
 
-  - [ ] 3.2 Implement entregadores data fetching and display
+  - [x] 3.2 Implement entregadores data fetching and display
+
     - Create useEntregadores hook for data management
+
     - Implement DataTable with entregador-specific columns
     - Add search functionality by name, email, CPF
     - Display entregador information (nome, email, telefone, status, documentos)
     - _Requirements: 2.2, 2.4_
+
 
   - [ ] 3.3 Add entregador approval functionality
     - Implement approve and reject action buttons
@@ -62,81 +65,114 @@
     - Add API integration for status updates
     - _Requirements: 2.3_
 
+
 - [ ] 4. Implement Consumidores management page
   - [ ] 4.1 Create /admin/consumidores page structure
     - Create src/app/(dashboard)/admin/consumidores/page.tsx
     - Implement page layout with AdminPageLayout
+
     - Add loading states and error handling
+
     - _Requirements: 3.1, 7.1, 7.2_
 
   - [ ] 4.2 Implement consumidores data fetching and display
     - Create useConsumidores hook for data management
     - Implement DataTable with consumidor-specific columns
+
     - Display consumidor information (nome, email, telefone, endereços, histórico)
     - Add search functionality by name, email, telefone
     - _Requirements: 3.2, 3.3_
 
   - [ ] 4.3 Add consumidor management functionality
     - Implement activate/deactivate action buttons
+
     - Create modal for viewing consumidor details and order history
     - Add API integration for status updates
     - _Requirements: 3.4_
 
-- [ ] 5. Implement Pedidos management page
+
+- [x] 5. Implement Pedidos management page
+
   - [ ] 5.1 Create /admin/pedidos page structure
     - Create src/app/(dashboard)/admin/pedidos/page.tsx
     - Implement page layout with AdminPageLayout
     - Add loading states and error handling
     - _Requirements: 4.1, 7.1, 7.2_
 
+
   - [ ] 5.2 Implement pedidos data fetching and display
     - Create usePedidos hook for data management
     - Implement DataTable with pedido-specific columns
     - Display pedido information (cliente, empresa, entregador, status, valor, data)
     - Add comprehensive filtering by status, date, empresa, entregador
+
     - _Requirements: 4.2, 4.3, 4.4_
 
   - [ ] 5.3 Add pedido management functionality
     - Implement status change functionality for problem cases
+
+
     - Create modal for viewing complete pedido details
+
     - Add search functionality by pedido ID or cliente name
     - _Requirements: 4.5_
 
 - [ ] 6. Implement Relatórios page
-  - [ ] 6.1 Create /admin/relatorios page structure
+  - [x] 6.1 Create /admin/relatorios page structure
+
     - Create src/app/(dashboard)/admin/relatorios/page.tsx
     - Implement page layout with AdminPageLayout
     - Add loading states and error handling
     - _Requirements: 5.1, 7.1, 7.2_
 
-  - [ ] 6.2 Implement metrics and charts display
+  - [x] 6.2 Implement metrics and charts display
+
     - Create StatsCards component for key metrics
     - Implement charts for pedidos, receita, empresas ativas, entregadores ativos
     - Add date range filtering functionality
+
+
+
+
+
+
+
+
+
+
     - Display comprehensive system statistics
     - _Requirements: 5.2, 5.3, 5.4_
 
-  - [ ] 6.3 Add report export functionality
+
+  - [x] 6.3 Add report export functionality
+
     - Implement PDF export functionality
     - Implement Excel export functionality
     - Add export buttons with loading states
     - _Requirements: 5.5_
 
+
+
 - [ ] 7. Implement Configurações page
   - [ ] 7.1 Create /admin/configuracoes page structure
     - Create src/app/(dashboard)/admin/configuracoes/page.tsx
     - Implement page layout with AdminPageLayout
+
+
     - Add loading states and error handling
     - _Requirements: 6.1, 7.1, 7.2_
 
   - [ ] 7.2 Implement system configuration form
     - Create form for global system settings
+
+
     - Implement taxa de entrega configuration
     - Add comissões configuration by category
     - Implement other global system settings
     - _Requirements: 6.2, 6.4_
 
-  - [ ] 7.3 Add configuration save functionality
+  - [x] 7.3 Add configuration save functionality
+
     - Implement form validation and submission
     - Add API integration for saving configurations
     - Show confirmation message after successful save

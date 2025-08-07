@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { AdminPageLayout } from '@/components/admin/admin-page-layout'
 import { DataTable, ColumnDef } from '@/components/admin/data-table'
 import { FilterBar, FilterOption } from '@/components/admin/filter-bar'
@@ -8,7 +8,7 @@ import { StatusBadge } from '@/components/admin/status-badge'
 import { ActionButtons, ActionItem } from '@/components/admin/action-buttons'
 import { Button } from '@/components/ui/button'
 import { Plus, Download } from 'lucide-react'
-import { toast } from '@/hooks/use-toast'
+import { useAdminEmpresas } from '@/hooks/use-admin-empresas'
 
 interface Empresa {
   id: string
@@ -23,120 +23,37 @@ interface Empresa {
 }
 
 export default function EmpresasPage() {
-  const [empresas, setEmpresas] = useState<Empresa[]>([])
-  const [filteredEmpresas, setFilteredEmpresas] = useState<Empresa[]>([])
-  const [loading, setLoading] = useState(true)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState('')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
 
-  // Mock data for now - will be replaced with API calls
-  useEffect(() => {
-    const mockEmpresas: Empresa[] = [
-      {
-        id: '1',
-        nome: 'Pizzaria do João',
-        email: 'contato@pizzariadojoao.com',
-        telefone: '(85) 99999-9999',
-        endereco: 'Rua das Flores, 123 - Centro',
-        cnpj: '12.345.678/0001-90',
-        status: 'pendente',
-        created_at: '2024-01-15T10:30:00Z',
-        updated_at: '2024-01-15T10:30:00Z',
-      },
-      {
-        id: '2',
-        nome: 'Hamburgueria Gourmet',
-        email: 'contato@hamburgeriagourmet.com',
-        telefone: '(85) 88888-8888',
-        endereco: 'Av. Principal, 456 - Aldeota',
-        cnpj: '98.765.432/0001-10',
-        status: 'aprovado',
-        created_at: '2024-01-10T14:20:00Z',
-        updated_at: '2024-01-12T09:15:00Z',
-      },
-      {
-        id: '3',
-        nome: 'Restaurante Tempero Caseiro',
-        email: 'contato@temperocaseiro.com',
-        telefone: '(85) 77777-7777',
-        endereco: 'Rua do Comércio, 789 - Meireles',
-        cnpj: '11.222.333/0001-44',
-        status: 'rejeitado',
-        created_at: '2024-01-08T16:45:00Z',
-        updated_at: '2024-01-09T11:30:00Z',
-      },
-    ]
-
-    setTimeout(() => {
-      setEmpresas(mockEmpresas)
-      setFilteredEmpresas(mockEmpresas)
-      setLoading(false)
-    }, 1000)
-  }, [])
+  const { empresas, loading, pagination, updateStatus, refetch } = useAdminEmpresas({
+    search: searchQuery,
+    status: statusFilter,
+  })
 
   const handleSearch = (query: string) => {
-    const filtered = empresas.filter(empresa =>
-      empresa.nome.toLowerCase().includes(query.toLowerCase()) ||
-      empresa.email.toLowerCase().includes(query.toLowerCase()) ||
-      empresa.cnpj.includes(query)
-    )
-    setFilteredEmpresas(filtered)
+    setSearchQuery(query)
   }
 
   const handleFilter = (filters: Record<string, any>) => {
-    let filtered = [...empresas]
-
-    if (filters.status) {
-      filtered = filtered.filter(empresa => empresa.status === filters.status)
-    }
-
-    setFilteredEmpresas(filtered)
+    setStatusFilter(filters.status || '')
   }
 
   const handleAction = async (actionKey: string, empresa: Empresa) => {
     setActionLoading(`${actionKey}-${empresa.id}`)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
-
       if (actionKey === 'approve') {
-        // Update empresa status to approved
-        const updatedEmpresas = empresas.map(e =>
-          e.id === empresa.id ? { ...e, status: 'aprovado' as const } : e
-        )
-        setEmpresas(updatedEmpresas)
-        setFilteredEmpresas(updatedEmpresas)
-        
-        toast({
-          title: 'Empresa aprovada',
-          description: `${empresa.nome} foi aprovada com sucesso.`,
-        })
+        await updateStatus(empresa.id, 'aprovado')
       } else if (actionKey === 'reject') {
-        // Update empresa status to rejected
-        const updatedEmpresas = empresas.map(e =>
-          e.id === empresa.id ? { ...e, status: 'rejeitado' as const } : e
-        )
-        setEmpresas(updatedEmpresas)
-        setFilteredEmpresas(updatedEmpresas)
-        
-        toast({
-          title: 'Empresa rejeitada',
-          description: `${empresa.nome} foi rejeitada.`,
-          variant: 'destructive',
-        })
+        await updateStatus(empresa.id, 'rejeitado')
       } else if (actionKey === 'view') {
         // Open empresa details modal (to be implemented)
-        toast({
-          title: 'Visualizar empresa',
-          description: `Abrindo detalhes de ${empresa.nome}`,
-        })
+        console.log('View empresa:', empresa)
       }
     } catch (error) {
-      toast({
-        title: 'Erro',
-        description: 'Ocorreu um erro ao processar a ação.',
-        variant: 'destructive',
-      })
+      // Error handling is done in the hook
     } finally {
       setActionLoading(null)
     }
@@ -239,10 +156,19 @@ export default function EmpresasPage() {
       />
       
       <DataTable
-        data={filteredEmpresas}
+        data={empresas}
         columns={columns}
         loading={loading}
         emptyMessage="Nenhuma empresa encontrada"
+        pagination={{
+          page: pagination.page,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+          onPageChange: (page) => {
+            // This would be handled by the hook in a real implementation
+            console.log('Change page to:', page)
+          }
+        }}
       />
     </AdminPageLayout>
   )
