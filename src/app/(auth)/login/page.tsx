@@ -23,7 +23,7 @@ export default function LoginPage() {
             </Link>
           </p>
           <p className="text-sm text-muted-foreground">
-            <Link href="/auth/forgot-password" className="text-primary hover:underline">
+            <Link href="/forgot-password" className="text-primary hover:underline">
               Esqueceu sua senha?
             </Link>
           </p>

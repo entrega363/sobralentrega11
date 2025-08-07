@@ -3,8 +3,23 @@ import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
   try {
-    // Just update session and pass through
+    // Update session and handle auth routing
     const response = await updateSession(request)
+    
+    // Allow access to auth pages and public routes
+    const { pathname } = request.nextUrl
+    const isAuthPage = pathname.startsWith('/login') || 
+                      pathname.startsWith('/register') || 
+                      pathname.startsWith('/forgot-password')
+    const isPublicRoute = pathname === '/' || 
+                         pathname.startsWith('/api') || 
+                         pathname.startsWith('/_next') ||
+                         pathname.includes('.')
+    
+    if (isAuthPage || isPublicRoute) {
+      return response
+    }
+    
     return response
   } catch (error) {
     console.error('Middleware error:', error)

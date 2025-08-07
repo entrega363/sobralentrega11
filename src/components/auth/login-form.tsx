@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
@@ -28,19 +28,20 @@ export function LoginForm() {
   })
 
   // Redirect if already authenticated
-  if (isAuthenticated && userRole) {
-    const redirectPath = {
-      admin: '/admin',
-      empresa: '/empresa',
-      entregador: '/entregador',
-      consumidor: '/consumidor',
-    }[userRole]
-    
-    if (redirectPath) {
-      router.push(redirectPath)
-      return null
+  useEffect(() => {
+    if (isAuthenticated && userRole) {
+      const redirectPath = {
+        admin: '/admin',
+        empresa: '/empresa',
+        entregador: '/entregador',
+        consumidor: '/consumidor',
+      }[userRole]
+      
+      if (redirectPath) {
+        router.push(redirectPath)
+      }
     }
-  }
+  }, [isAuthenticated, userRole, router])
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true)
