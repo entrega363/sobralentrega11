@@ -16,7 +16,7 @@ export default function DebugApiPage() {
       const response = await fetch(`/api${endpoint}`)
       const data = await response.json()
       
-      setResults(prev => ({
+      setResults((prev: any) => ({
         ...prev,
         [name]: {
           status: response.status,
@@ -25,7 +25,7 @@ export default function DebugApiPage() {
         }
       }))
     } catch (error) {
-      setResults(prev => ({
+      setResults((prev: any) => ({
         ...prev,
         [name]: {
           status: 'error',
