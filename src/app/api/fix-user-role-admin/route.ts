@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient()
+    // Use service role key for admin operations
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
     
     // Get the email from query params
     const { searchParams } = new URL(request.url)
@@ -11,65 +21,52 @@ export async function GET(request: NextRequest) {
     
     console.log(`Fixing user role for: ${email}`)
     
-    // 1. Get current session to verify user
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    // 1. Find user by email in auth.users
+    const { data: users, error: usersError } = await supabase.auth.admin.listUsers()
+    if (usersError) throw usersError
+    
+    const user = users.users.find(u => u.email === email)
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
     
-    // 2. Find user by email in profiles table
-    const { data: profileData, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', session.user.id)
-      .single()
+    console.log('User found:', user.id, user.email)
     
-    if (profileError || !profileData) {
-      return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
-    }
-    
-    // Only allow the user to fix their own role or admin
-    if (session.user.email !== email && profileData.role !== 'admin') {
-      return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
-    }
-    
-    console.log('User found:', session.user.id, session.user.email)
-    
-    // 3. Update profile to empresa
-    const { error: updateError } = await supabase
+    // 2. Update profile to empresa
+    const { error: profileError } = await supabase
       .from('profiles')
       .update({ 
         role: 'empresa',
-        nome: session.user.user_metadata?.nome || 'Empresa Matutaria'
+        nome: user.user_metadata?.nome || 'Empresa Matutaria'
       })
-      .eq('id', session.user.id)
+      .eq('id', user.id)
     
-    if (updateError) {
-      console.error('Profile update error:', updateError)
-      throw updateError
+    if (profileError) {
+      console.error('Profile update error:', profileError)
+      throw profileError
     }
     
     console.log('Profile updated to empresa')
     
-    // 4. Check if empresa record exists
+    // 3. Check if empresa record exists
     const { data: existingEmpresa } = await supabase
       .from('empresas')
       .select('id')
-      .eq('profile_id', session.user.id)
+      .eq('profile_id', user.id)
       .single()
     
     if (!existingEmpresa) {
-      // 5. Create empresa record
+      // 4. Create empresa record
       const { error: empresaError } = await supabase
         .from('empresas')
         .insert({
-          profile_id: session.user.id,
-          nome: session.user.user_metadata?.nome || 'Empresa Matutaria',
-          cnpj: session.user.user_metadata?.cnpj || '00.000.000/0001-00',
-          categoria: session.user.user_metadata?.categoria || 'Restaurante',
-          responsavel: session.user.user_metadata?.responsavel || 'Responsável',
-          telefone: session.user.user_metadata?.telefone || '(88) 99999-9999',
-          endereco: session.user.user_metadata?.endereco || {
+          profile_id: user.id,
+          nome: user.user_metadata?.nome || 'Empresa Matutaria',
+          cnpj: user.user_metadata?.cnpj || '00.000.000/0001-00',
+          categoria: user.user_metadata?.categoria || 'Restaurante',
+          responsavel: user.user_metadata?.responsavel || 'Responsável',
+          telefone: user.user_metadata?.telefone || '(88) 99999-9999',
+          endereco: user.user_metadata?.endereco || {
             rua: 'Rua Principal',
             numero: '123',
             bairro: 'Centro',
@@ -89,11 +86,11 @@ export async function GET(request: NextRequest) {
       console.log('Empresa record already exists')
     }
     
-    // 6. Remove from consumidores if exists
+    // 5. Remove from consumidores if exists
     const { error: deleteError } = await supabase
       .from('consumidores')
       .delete()
-      .eq('profile_id', session.user.id)
+      .eq('profile_id', user.id)
     
     if (deleteError && deleteError.code !== 'PGRST116') { // PGRST116 = no rows found
       console.error('Delete consumidor error:', deleteError)
@@ -101,25 +98,25 @@ export async function GET(request: NextRequest) {
       console.log('Removed from consumidores table (if existed)')
     }
     
-    // 7. Verify the fix
+    // 6. Verify the fix
     const { data: verifyProfile } = await supabase
       .from('profiles')
       .select('role, nome')
-      .eq('id', session.user.id)
+      .eq('id', user.id)
       .single()
     
     const { data: verifyEmpresa } = await supabase
       .from('empresas')
       .select('id, nome')
-      .eq('profile_id', session.user.id)
+      .eq('profile_id', user.id)
       .single()
     
     return NextResponse.json({
       success: true,
       message: `User ${email} role fixed successfully!`,
       user: {
-        id: session.user.id,
-        email: session.user.email,
+        id: user.id,
+        email: user.email,
         role: verifyProfile?.role,
         nome: verifyProfile?.nome,
         hasEmpresaRecord: !!verifyEmpresa
