@@ -26,7 +26,7 @@ export function EntregadorDashboardSimple() {
             <p><strong>Email:</strong> {user?.email}</p>
             <p><strong>ID:</strong> {user?.id}</p>
             <p><strong>Role:</strong> {profile?.role}</p>
-            <p><strong>Nome:</strong> {profile?.nome || 'Não informado'}</p>
+            <p><strong>Nome:</strong> {(profile as any)?.nome || 'Não informado'}</p>
           </div>
         </CardContent>
       </Card>
