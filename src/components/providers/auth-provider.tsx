@@ -84,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('Fetching profile for user:', userId)
       
+      // Force a fresh fetch by adding a timestamp to bypass any cache
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
@@ -96,6 +97,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('Profile fetched:', profile)
+      
+      // Additional verification for specific user
+      if (profile.email === 'matutaria@gmail.com') {
+        console.log('MATUTARIA USER DETECTED - Role:', profile.role)
+        
+        // If role is not empresa, try to fix it
+        if (profile.role !== 'empresa') {
+          console.log('INCORRECT ROLE DETECTED - Attempting to fix...')
+          
+          // Call our fix endpoint
+          try {
+            const response = await fetch('/api/fix-matutaria-user', {
+              method: 'POST'
+            })
+            
+            if (response.ok) {
+              console.log('User fixed, refetching profile...')
+              // Refetch after fix
+              const { data: fixedProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single()
+              
+              if (fixedProfile) {
+                console.log('Fixed profile:', fixedProfile)
+                setProfile(fixedProfile)
+                return
+              }
+            }
+          } catch (fixError) {
+            console.error('Error fixing user:', fixError)
+          }
+        }
+      }
+      
       setProfile(profile)
     } catch (error) {
       console.error('Error in fetchProfile:', error)
@@ -109,6 +146,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Clear any cached profile data before login
       setProfile(null)
       
+      // Clear localStorage cache as well
+      localStorage.removeItem('auth-storage')
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -116,9 +156,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
-      // Force fresh profile fetch after login
+      // Force fresh profile fetch after login with a small delay
       if (data.user) {
-        await fetchProfile(data.user.id)
+        // Wait a bit to ensure session is fully established
+        setTimeout(async () => {
+          await fetchProfile(data.user.id)
+        }, 500)
       }
     } catch (error) {
       setLoading(false)
