@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 role: userData.role,
                 nome: userData.nome || email
               })
-              .eq('id', data.user.id)
+              .eq('id', data.user!.id)
 
             if (profileError) {
               console.error('Error updating profile role:', profileError)
@@ -151,7 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Create specific role record
             if (userData.role === 'empresa') {
               await supabase.from('empresas').insert({
-                profile_id: data.user.id,
+                profile_id: data.user!.id,
                 nome: userData.nome,
                 cnpj: userData.cnpj,
                 categoria: userData.categoria,
@@ -162,7 +162,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               })
             } else if (userData.role === 'entregador') {
               await supabase.from('entregadores').insert({
-                profile_id: data.user.id,
+                profile_id: data.user!.id,
                 nome: userData.nome,
                 cpf: userData.cpf,
                 telefone: userData.telefone,
@@ -172,7 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               })
             } else if (userData.role === 'consumidor') {
               await supabase.from('consumidores').insert({
-                profile_id: data.user.id,
+                profile_id: data.user!.id,
                 nome: userData.nome,
                 telefone: userData.telefone,
                 endereco: userData.endereco
