@@ -82,6 +82,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProfile = async (userId: string) => {
     try {
+      console.log('Fetching profile for user:', userId)
+      
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('*')
@@ -93,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return
       }
 
+      console.log('Profile fetched:', profile)
       setProfile(profile)
     } catch (error) {
       console.error('Error in fetchProfile:', error)
@@ -103,6 +106,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true)
     
     try {
+      // Clear any cached profile data before login
+      setProfile(null)
+      
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -110,7 +116,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
-      // Profile will be fetched automatically by the auth state change listener
+      // Force fresh profile fetch after login
+      if (data.user) {
+        await fetchProfile(data.user.id)
+      }
     } catch (error) {
       setLoading(false)
       throw error
