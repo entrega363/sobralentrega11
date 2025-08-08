@@ -34,6 +34,7 @@
 
 
 
+
   - Implementar logging detalhado para debug
   - _Requisitos: 3.1, 3.2_
 
