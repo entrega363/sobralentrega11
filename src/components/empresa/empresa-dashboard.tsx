@@ -14,19 +14,22 @@ import { Plus, Package, ShoppingCart, TrendingUp, Clock } from 'lucide-react'
 export function EmpresaDashboard() {
   const { profile, user } = useAuthSelectors()
   
-  // Ativar real-time para pedidos da empresa
-  const { isConnected } = useRealtimePedidos(user?.id)
-  
-  // Buscar dados da empresa (precisaríamos do ID da empresa)
-  const { data: produtos = [], isLoading: loadingProdutos } = useProdutos()
-  const { data: pedidos = [], isLoading: loadingPedidos } = usePedidos()
+  // Buscar dados da empresa
+  const { data: produtos = [], isLoading: loadingProdutos, error: errorProdutos } = useProdutos()
+  const { data: pedidos = [], isLoading: loadingPedidos, error: errorPedidos } = usePedidos()
+
+  // Debug: mostrar dados no console
+  console.log('EmpresaDashboard - produtos:', produtos)
+  console.log('EmpresaDashboard - pedidos:', pedidos)
+  console.log('EmpresaDashboard - user:', user)
+  console.log('EmpresaDashboard - profile:', profile)
 
   // Estatísticas básicas
-  const produtosAtivos = produtos?.filter((p: any) => p.disponivel).length || 0
-  const pedidosPendentes = pedidos?.filter((p: any) => p.status === 'pendente').length || 0
-  const receitaTotal = pedidos
-    ?.filter((p: any) => p.status === 'entregue')
-    .reduce((sum: number, p: any) => sum + p.total, 0) || 0
+  const produtosAtivos = Array.isArray(produtos) ? produtos.filter((p: any) => p.disponivel).length : 0
+  const pedidosPendentes = Array.isArray(pedidos) ? pedidos.filter((p: any) => p.status === 'pendente').length : 0
+  const receitaTotal = Array.isArray(pedidos) ? pedidos
+    .filter((p: any) => p.status === 'entregue')
+    .reduce((sum: number, p: any) => sum + (p.total || 0), 0) : 0
 
   if (loadingProdutos || loadingPedidos) {
     return (
@@ -34,6 +37,25 @@ export function EmpresaDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sobral-red-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Carregando dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (errorProdutos || errorPedidos) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Erro ao carregar dados
+          </h3>
+          <p className="text-gray-600 mb-4">
+            {errorProdutos?.message || errorPedidos?.message || 'Erro desconhecido'}
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            Tentar Novamente
+          </Button>
         </div>
       </div>
     )

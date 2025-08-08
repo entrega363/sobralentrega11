@@ -1,5 +1,5 @@
-import { EmpresaDashboard } from '@/components/empresa/empresa-dashboard'
+import { EmpresaDashboardSimple } from '@/components/empresa/empresa-dashboard-simple'
 
 export default function EmpresaPage() {
-  return <EmpresaDashboard />
+  return <EmpresaDashboardSimple />
 }

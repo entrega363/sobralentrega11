@@ -51,7 +51,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Verificar se a mudança de status é válida
-    const statusValidos = {
+    const statusValidos: Record<string, string[]> = {
       'pendente': ['confirmado', 'cancelado'],
       'confirmado': ['preparando', 'cancelado'],
       'preparando': ['saiu_entrega', 'cancelado'],

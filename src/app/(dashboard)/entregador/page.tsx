@@ -1,5 +1,5 @@
-import { EntregadorDashboard } from '@/components/entregador/entregador-dashboard'
+import { EntregadorDashboardSimple } from '@/components/entregador/entregador-dashboard-simple'
 
 export default function EntregadorPage() {
-  return <EntregadorDashboard />
+  return <EntregadorDashboardSimple />
 }

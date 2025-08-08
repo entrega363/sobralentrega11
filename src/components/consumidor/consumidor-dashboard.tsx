@@ -16,22 +16,27 @@ export function ConsumidorDashboard() {
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const { profile } = useAuthSelectors()
   
-  const { data: produtos = [], isLoading: loadingProdutos } = useProdutos()
-  const { data: empresas = [], isLoading: loadingEmpresas } = useEmpresas()
+  const { data: produtos = [], isLoading: loadingProdutos, error: errorProdutos } = useProdutos()
+  const { data: empresas = [], isLoading: loadingEmpresas, error: errorEmpresas } = useEmpresas()
+
+  // Debug: mostrar dados no console
+  console.log('ConsumidorDashboard - produtos:', produtos)
+  console.log('ConsumidorDashboard - empresas:', empresas)
+  console.log('ConsumidorDashboard - profile:', profile)
 
   // Filtrar produtos
-  const produtosFiltrados = produtos?.filter((produto: any) => {
+  const produtosFiltrados = Array.isArray(produtos) ? produtos.filter((produto: any) => {
     const matchBusca = !busca || 
-      produto.nome.toLowerCase().includes(busca.toLowerCase()) ||
+      produto.nome?.toLowerCase().includes(busca.toLowerCase()) ||
       produto.empresas?.nome?.toLowerCase().includes(busca.toLowerCase())
     
     const matchCategoria = !filtroCategoria || produto.categoria === filtroCategoria
     
     return matchBusca && matchCategoria
-  }) || []
+  }) : []
 
   // Obter categorias únicas
-  const categorias = Array.from(new Set(produtos?.map((p: any) => p.categoria) || []))
+  const categorias = Array.isArray(produtos) ? Array.from(new Set(produtos.map((p: any) => p.categoria).filter(Boolean))) : []
 
   if (loadingProdutos || loadingEmpresas) {
     return (
@@ -39,6 +44,25 @@ export function ConsumidorDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sobral-red-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Carregando produtos...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (errorProdutos || errorEmpresas) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Erro ao carregar dados
+          </h3>
+          <p className="text-gray-600 mb-4">
+            {errorProdutos?.message || errorEmpresas?.message || 'Erro desconhecido'}
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            Tentar Novamente
+          </Button>
         </div>
       </div>
     )

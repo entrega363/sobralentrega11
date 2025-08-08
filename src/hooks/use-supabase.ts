@@ -37,7 +37,10 @@ export function useEmpresas(filters?: { status?: string; categoria?: string }) {
   
   return useQuery({
     queryKey: ['empresas', filters],
-    queryFn: () => apiRequest(`/empresas?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiRequest(`/empresas?${params.toString()}`)
+      return response.empresas || response.data || response || []
+    },
     staleTime: CACHE_TIME.MEDIUM,
     gcTime: CACHE_TIME.LONG,
   })
@@ -56,7 +59,10 @@ export function useProdutos(filters?: {
   
   return useQuery({
     queryKey: ['produtos', filters],
-    queryFn: () => apiRequest(`/produtos?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiRequest(`/produtos?${params.toString()}`)
+      return response.produtos || response.data || response || []
+    },
     staleTime: CACHE_TIME.SHORT,
     gcTime: CACHE_TIME.MEDIUM,
   })
@@ -80,7 +86,10 @@ export function usePedidos(filters?: { status?: string }) {
   
   return useQuery({
     queryKey: ['pedidos', filters],
-    queryFn: () => apiRequest(`/pedidos?${params.toString()}`),
+    queryFn: async () => {
+      const response = await apiRequest(`/pedidos?${params.toString()}`)
+      return response.pedidos || response.data || response || []
+    },
     staleTime: CACHE_TIME.SHORT,
     gcTime: CACHE_TIME.MEDIUM,
     refetchInterval: 30000, // Refetch a cada 30 segundos para pedidos

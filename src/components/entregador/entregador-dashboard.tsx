@@ -12,19 +12,21 @@ import { Truck, Clock, CheckCircle, MapPin, Phone } from 'lucide-react'
 
 export function EntregadorDashboard() {
   const { profile, user } = useAuthSelectors()
-  const { data: pedidos = [], isLoading } = usePedidos()
+  const { data: pedidos = [], isLoading, error } = usePedidos()
   
-  // Ativar real-time para entregas
-  const { isConnected, availableDeliveries } = useRealtimeEntregas(user?.id)
+  // Debug: mostrar dados no console
+  console.log('EntregadorDashboard - pedidos:', pedidos)
+  console.log('EntregadorDashboard - user:', user)
+  console.log('EntregadorDashboard - profile:', profile)
 
   // Filtrar pedidos disponíveis para entrega
-  const pedidosDisponiveis = pedidos?.filter((p: any) => 
+  const pedidosDisponiveis = Array.isArray(pedidos) ? pedidos.filter((p: any) => 
     p.status === 'pronto' && !p.entregador_id
-  ) || []
+  ) : []
   
-  const minhasEntregas = pedidos?.filter((p: any) => 
+  const minhasEntregas = Array.isArray(pedidos) ? pedidos.filter((p: any) => 
     p.entregador_id === profile?.id
-  ) || []
+  ) : []
 
   const entregasHoje = minhasEntregas.filter((p: any) => {
     const hoje = new Date().toDateString()
@@ -41,6 +43,25 @@ export function EntregadorDashboard() {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sobral-red-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Carregando entregas...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Erro ao carregar dados
+          </h3>
+          <p className="text-gray-600 mb-4">
+            {error?.message || 'Erro desconhecido'}
+          </p>
+          <Button onClick={() => window.location.reload()}>
+            Tentar Novamente
+          </Button>
         </div>
       </div>
     )
