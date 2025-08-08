@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     // Processar dados para formato mais amigável
-    const pedidos = data?.map(pedido => ({
+    const pedidos = data?.map((pedido: any) => ({
       id: pedido.id,
       cliente_nome: pedido.consumidor?.nome || 'N/A',
       cliente_email: pedido.consumidor?.email || 'N/A',
