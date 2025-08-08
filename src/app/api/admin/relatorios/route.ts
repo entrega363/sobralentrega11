@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
       }, {} as Record<string, { nome: string, receita: number, pedidos: number }>) || {}
 
       const topEmpresasArray = Object.values(empresasPorReceita)
-        .sort((a, b) => b.receita - a.receita)
+        .sort((a: any, b: any) => b.receita - a.receita)
         .slice(0, 5)
 
       const relatorioData = {
