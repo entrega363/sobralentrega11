@@ -131,6 +131,59 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) throw error
 
+      // If user was created successfully, update their profile with correct role
+      if (data.user && userData.role) {
+        // Wait a bit for the trigger to create the profile
+        setTimeout(async () => {
+          try {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .update({ 
+                role: userData.role,
+                nome: userData.nome || email
+              })
+              .eq('id', data.user.id)
+
+            if (profileError) {
+              console.error('Error updating profile role:', profileError)
+            }
+
+            // Create specific role record
+            if (userData.role === 'empresa') {
+              await supabase.from('empresas').insert({
+                profile_id: data.user.id,
+                nome: userData.nome,
+                cnpj: userData.cnpj,
+                categoria: userData.categoria,
+                responsavel: userData.responsavel,
+                telefone: userData.telefone,
+                endereco: userData.endereco,
+                status: 'pendente'
+              })
+            } else if (userData.role === 'entregador') {
+              await supabase.from('entregadores').insert({
+                profile_id: data.user.id,
+                nome: userData.nome,
+                cpf: userData.cpf,
+                telefone: userData.telefone,
+                veiculo: userData.veiculo,
+                endereco: userData.endereco,
+                status: 'pendente'
+              })
+            } else if (userData.role === 'consumidor') {
+              await supabase.from('consumidores').insert({
+                profile_id: data.user.id,
+                nome: userData.nome,
+                telefone: userData.telefone,
+                endereco: userData.endereco
+              })
+            }
+          } catch (error) {
+            console.error('Error creating role-specific record:', error)
+          }
+        }, 1000)
+      }
+
       // If email confirmation is disabled, profile will be created automatically
       // Otherwise, user needs to confirm email first
     } catch (error) {
