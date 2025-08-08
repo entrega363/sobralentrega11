@@ -107,11 +107,11 @@ export async function GET(request: NextRequest) {
 
       // Processar resultados
       const totalPedidos = totalPedidosResult.count || 0
-      const receitaTotal = receitaTotalResult.data?.reduce((sum, pedido) => sum + (pedido.valor_total || 0), 0) || 0
+      const receitaTotal = receitaTotalResult.data?.reduce((sum: number, pedido: any) => sum + (pedido.valor_total || 0), 0) || 0
       const empresasAtivas = empresasAtivasResult.count || 0
       const entregadoresAtivos = entregadoresAtivosResult.count || 0
       const pedidosHoje = pedidosHojeResult.count || 0
-      const receitaHoje = receitaHojeResult.data?.reduce((sum, pedido) => sum + (pedido.valor_total || 0), 0) || 0
+      const receitaHoje = receitaHojeResult.data?.reduce((sum: number, pedido: any) => sum + (pedido.valor_total || 0), 0) || 0
       const pedidosPeriodoAnterior = pedidosPeriodoAnteriorResult.count || 0
       
       // Calcular crescimento mensal
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
         .order('created_at', { ascending: true })
 
       // Agrupar pedidos por dia
-      const pedidosPorDiaAgrupados = pedidosPorDia?.reduce((acc, pedido) => {
+      const pedidosPorDiaAgrupados = pedidosPorDia?.reduce((acc: any, pedido: any) => {
         const data = new Date(pedido.created_at).toISOString().split('T')[0]
         if (!acc[data]) {
           acc[data] = { data, pedidos: 0, receita: 0 }
@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
         .gte('created_at', dataInicioISO)
         .eq('status', 'entregue')
 
-      const empresasPorReceita = topEmpresas?.reduce((acc, pedido) => {
+      const empresasPorReceita = topEmpresas?.reduce((acc: any, pedido: any) => {
         const empresaId = pedido.empresa_id
         const empresaNome = pedido.empresa?.nome || 'N/A'
         
