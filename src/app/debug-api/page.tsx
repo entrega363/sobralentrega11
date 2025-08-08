@@ -24,7 +24,7 @@ export default function DebugApiPage() {
           success: response.ok
         }
       }))
-    } catch (error) {
+    } catch (error: any) {
       setResults((prev: any) => ({
         ...prev,
         [name]: {
