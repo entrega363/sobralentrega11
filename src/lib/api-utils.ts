@@ -26,9 +26,25 @@ export function handleApiError(error: unknown) {
   }
 
   if (error instanceof ZodError) {
+    // Verificar se há erro específico de categoria
+    const categoryError = error.errors.find(err => err.path.includes('categoria'))
+    
+    if (categoryError) {
+      return NextResponse.json(
+        { 
+          error: categoryError.message,
+          field: 'categoria'
+        },
+        { status: 400 }
+      )
+    }
+
+    // Para outros erros de validação, mostrar o primeiro erro mais específico
+    const firstError = error.errors[0]
     return NextResponse.json(
       { 
-        error: 'Dados inválidos', 
+        error: firstError.message,
+        field: firstError.path.join('.'),
         details: error.errors 
       },
       { status: 400 }

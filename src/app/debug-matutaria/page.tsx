@@ -111,7 +111,7 @@ export default function DebugMatutariaPage() {
               <p><strong>Email:</strong> {user?.email || 'Não logado'}</p>
               <p><strong>ID:</strong> {user?.id || 'N/A'}</p>
               <p><strong>Role no Profile:</strong> {profile?.role || 'N/A'}</p>
-              <p><strong>Nome no Profile:</strong> {profile?.nome || 'N/A'}</p>
+              <p><strong>Nome no Profile:</strong> {(profile as any)?.nome || 'N/A'}</p>
             </div>
           </CardContent>
         </Card>

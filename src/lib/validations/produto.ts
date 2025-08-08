@@ -2,11 +2,13 @@ import { z } from 'zod'
 import { CATEGORIAS_PRODUTOS } from '@/lib/constants'
 
 export const produtoSchema = z.object({
-  nome: z.string().min(1, 'Nome é obrigatório').max(100, 'Nome muito longo'),
-  descricao: z.string().max(500, 'Descrição muito longa').optional(),
-  preco: z.number().positive('Preço deve ser positivo').max(999.99, 'Preço muito alto'),
+  nome: z.string().min(1, 'Nome do produto é obrigatório').max(100, 'Nome deve ter no máximo 100 caracteres'),
+  descricao: z.string().max(500, 'Descrição deve ter no máximo 500 caracteres').optional(),
+  preco: z.number().positive('Preço deve ser maior que zero').max(999.99, 'Preço deve ser menor que R$ 999,99'),
   categoria: z.enum(CATEGORIAS_PRODUTOS as any, {
-    errorMap: () => ({ message: 'Categoria inválida' })
+    errorMap: () => ({ 
+      message: `Categoria inválida. Categorias válidas: ${CATEGORIAS_PRODUTOS.join(', ')}` 
+    })
   }),
   imagem_url: z.string().url('URL da imagem inválida').optional().or(z.literal('')),
   disponivel: z.boolean().default(true),

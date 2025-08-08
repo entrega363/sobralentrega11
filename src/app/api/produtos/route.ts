@@ -123,6 +123,16 @@ export async function POST(request: NextRequest) {
 
     // Validar dados
     const body = await request.json()
+    console.log('Dados recebidos para validação:', body)
+    
+    try {
+      const validatedData = produtoSchema.parse(body)
+      console.log('Dados validados com sucesso:', validatedData)
+    } catch (validationError) {
+      console.error('Erro de validação:', validationError)
+      throw validationError
+    }
+    
     const validatedData = produtoSchema.parse(body)
 
     // Inserir produto
