@@ -1,5 +1,5 @@
-import { ConsumidorDashboardSimple } from '@/components/consumidor/consumidor-dashboard-simple'
+import { ConsumidorDashboard } from '@/components/consumidor/consumidor-dashboard'
 
 export default function ConsumidorPage() {
-  return <ConsumidorDashboardSimple />
+  return <ConsumidorDashboard />
 }

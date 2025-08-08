@@ -30,11 +30,14 @@
   - _Requisitos: 3.1, 3.2, 3.3, 3.4_
 
 
+
 - [ ] 4. Implementar hooks para dados do consumidor
   - Criar hook para buscar pedidos do consumidor
   - Criar hook para buscar favoritos do consumidor
   - Criar hook para buscar e atualizar dados do consumidor
   - Adicionar tratamento de erro e loading nos hooks
+
+
   - _Requisitos: 1.1, 2.1, 3.1_
 
 - [ ] 5. Testar navegação e funcionalidades
