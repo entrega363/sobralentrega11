@@ -36,24 +36,24 @@ export async function GET(request: NextRequest) {
     // Calcular offset
     const offset = (page - 1) * pageSize
 
-    // Construir query base
+    // Construir query base com dados das empresas
     let query = supabase
-      .from('profiles')
+      .from('empresas')
       .select(`
         id,
         nome,
-        email,
-        telefone,
-        endereco,
         cnpj,
+        categoria,
+        endereco,
+        contato,
         status,
         created_at,
         updated_at,
-        aprovada_em,
-        rejeitada_em,
-        motivo_rejeicao
+        profiles!inner(
+          id,
+          role
+        )
       `)
-      .eq('role', 'empresa')
       .range(offset, offset + pageSize - 1)
 
     // Aplicar filtros
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%,cnpj.ilike.%${search}%`)
+      query = query.or(`nome.ilike.%${search}%,cnpj.ilike.%${search}%`)
     }
 
     // Aplicar ordenação
@@ -70,28 +70,37 @@ export async function GET(request: NextRequest) {
     query = query.order(sortBy, { ascending })
 
     // Executar query
-    const { data, error, count } = await query
+    const { data, error } = await query
 
     if (error) throw error
 
+    // Buscar emails dos usuários
+    const empresasComEmail = await Promise.all(
+      (data || []).map(async (empresa) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(empresa.profiles.id)
+        
+        return {
+          id: empresa.id,
+          nome: empresa.nome,
+          email: userData.user?.email || 'N/A',
+          cnpj: empresa.cnpj,
+          categoria: empresa.categoria,
+          telefone: empresa.contato?.telefone || 'N/A',
+          endereco: empresa.endereco,
+          status: empresa.status,
+          created_at: empresa.created_at,
+          updated_at: empresa.updated_at
+        }
+      })
+    )
+
     // Buscar contagem total para paginação
-    let countQuery = supabase
-      .from('profiles')
+    const { count: totalCount } = await supabase
+      .from('empresas')
       .select('*', { count: 'exact', head: true })
-      .eq('role', 'empresa')
-
-    if (status) {
-      countQuery = countQuery.eq('status', status)
-    }
-
-    if (search) {
-      countQuery = countQuery.or(`nome.ilike.%${search}%,email.ilike.%${search}%,cnpj.ilike.%${search}%`)
-    }
-
-    const { count: totalCount } = await countQuery
 
     return createSuccessResponse({
-      empresas: data || [],
+      empresas: empresasComEmail,
       pagination: {
         page,
         pageSize,

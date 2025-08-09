@@ -36,29 +36,32 @@ export async function GET(request: NextRequest) {
     // Calcular offset
     const offset = (page - 1) * pageSize
 
-    // Construir query base com contagem de pedidos
+    // Construir query base com dados dos consumidores
     let query = supabase
-      .from('profiles')
+      .from('consumidores')
       .select(`
         id,
         nome,
-        email,
-        telefone,
-        status,
+        cpf,
+        endereco,
+        contato,
         created_at,
         updated_at,
-        pedidos:pedidos(count)
+        profiles!inner(
+          id,
+          role
+        ),
+        auth_users:profiles(
+          auth_user:auth.users(
+            email
+          )
+        )
       `)
-      .eq('role', 'consumidor')
       .range(offset, offset + pageSize - 1)
 
-    // Aplicar filtros
-    if (status) {
-      query = query.eq('status', status)
-    }
-
+    // Aplicar filtros de busca
     if (search) {
-      query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%,telefone.ilike.%${search}%`)
+      query = query.or(`nome.ilike.%${search}%,cpf.ilike.%${search}%`)
     }
 
     // Aplicar ordenação
@@ -70,31 +73,33 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
-    // Processar dados para incluir total de pedidos
-    const consumidores = data?.map(consumidor => ({
-      ...consumidor,
-      total_pedidos: consumidor.pedidos?.[0]?.count || 0,
-      pedidos: undefined // Remove o campo pedidos do resultado
-    })) || []
+    // Buscar emails dos usuários
+    const consumidoresComEmail = await Promise.all(
+      (data || []).map(async (consumidor) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(consumidor.profiles.id)
+        
+        return {
+          id: consumidor.id,
+          nome: consumidor.nome,
+          email: userData.user?.email || 'N/A',
+          telefone: consumidor.contato?.telefone || 'N/A',
+          cpf: consumidor.cpf,
+          endereco: consumidor.endereco,
+          status: 'ativo', // Por enquanto fixo, pode ser implementado depois
+          created_at: consumidor.created_at,
+          updated_at: consumidor.updated_at,
+          total_pedidos: 0 // Implementar contagem depois se necessário
+        }
+      })
+    )
 
     // Buscar contagem total para paginação
-    let countQuery = supabase
-      .from('profiles')
+    const { count: totalCount } = await supabase
+      .from('consumidores')
       .select('*', { count: 'exact', head: true })
-      .eq('role', 'consumidor')
-
-    if (status) {
-      countQuery = countQuery.eq('status', status)
-    }
-
-    if (search) {
-      countQuery = countQuery.or(`nome.ilike.%${search}%,email.ilike.%${search}%,telefone.ilike.%${search}%`)
-    }
-
-    const { count: totalCount } = await countQuery
 
     return createSuccessResponse({
-      consumidores,
+      consumidores: consumidoresComEmail,
       pagination: {
         page,
         pageSize,

@@ -36,25 +36,24 @@ export async function GET(request: NextRequest) {
     // Calcular offset
     const offset = (page - 1) * pageSize
 
-    // Construir query base
+    // Construir query base com dados dos entregadores
     let query = supabase
-      .from('profiles')
+      .from('entregadores')
       .select(`
         id,
         nome,
-        email,
-        telefone,
         cpf,
-        cnh,
+        endereco,
+        contato,
         veiculo,
         status,
         created_at,
         updated_at,
-        aprovada_em,
-        rejeitada_em,
-        motivo_rejeicao
+        profiles!inner(
+          id,
+          role
+        )
       `)
-      .eq('role', 'entregador')
       .range(offset, offset + pageSize - 1)
 
     // Aplicar filtros
@@ -63,7 +62,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`nome.ilike.%${search}%,email.ilike.%${search}%,cpf.ilike.%${search}%`)
+      query = query.or(`nome.ilike.%${search}%,cpf.ilike.%${search}%`)
     }
 
     // Aplicar ordenação
@@ -75,24 +74,33 @@ export async function GET(request: NextRequest) {
 
     if (error) throw error
 
+    // Buscar emails dos usuários
+    const entregadoresComEmail = await Promise.all(
+      (data || []).map(async (entregador) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(entregador.profiles.id)
+        
+        return {
+          id: entregador.id,
+          nome: entregador.nome,
+          email: userData.user?.email || 'N/A',
+          telefone: entregador.contato?.telefone || 'N/A',
+          cpf: entregador.cpf,
+          cnh: entregador.contato?.cnh || 'N/A',
+          veiculo: `${entregador.veiculo?.tipo || 'N/A'} ${entregador.veiculo?.modelo || ''}`.trim(),
+          status: entregador.status,
+          created_at: entregador.created_at,
+          updated_at: entregador.updated_at
+        }
+      })
+    )
+
     // Buscar contagem total para paginação
-    let countQuery = supabase
-      .from('profiles')
+    const { count: totalCount } = await supabase
+      .from('entregadores')
       .select('*', { count: 'exact', head: true })
-      .eq('role', 'entregador')
-
-    if (status) {
-      countQuery = countQuery.eq('status', status)
-    }
-
-    if (search) {
-      countQuery = countQuery.or(`nome.ilike.%${search}%,email.ilike.%${search}%,cpf.ilike.%${search}%`)
-    }
-
-    const { count: totalCount } = await countQuery
 
     return createSuccessResponse({
-      entregadores: data || [],
+      entregadores: entregadoresComEmail,
       pagination: {
         page,
         pageSize,
