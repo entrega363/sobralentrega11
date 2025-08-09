@@ -47,15 +47,7 @@ export async function GET(request: NextRequest) {
         contato,
         created_at,
         updated_at,
-        profiles!inner(
-          id,
-          role
-        ),
-        auth_users:profiles(
-          auth_user:auth.users(
-            email
-          )
-        )
+        profile_id
       `)
       .range(offset, offset + pageSize - 1)
 
@@ -75,8 +67,8 @@ export async function GET(request: NextRequest) {
 
     // Buscar emails dos usuários
     const consumidoresComEmail = await Promise.all(
-      (data || []).map(async (consumidor) => {
-        const { data: userData } = await supabase.auth.admin.getUserById(consumidor.profiles.id)
+      (data || []).map(async (consumidor: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(consumidor.profile_id)
         
         return {
           id: consumidor.id,

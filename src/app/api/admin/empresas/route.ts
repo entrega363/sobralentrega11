@@ -49,10 +49,7 @@ export async function GET(request: NextRequest) {
         status,
         created_at,
         updated_at,
-        profiles!inner(
-          id,
-          role
-        )
+        profile_id
       `)
       .range(offset, offset + pageSize - 1)
 
@@ -76,8 +73,8 @@ export async function GET(request: NextRequest) {
 
     // Buscar emails dos usuários
     const empresasComEmail = await Promise.all(
-      (data || []).map(async (empresa) => {
-        const { data: userData } = await supabase.auth.admin.getUserById(empresa.profiles.id)
+      (data || []).map(async (empresa: any) => {
+        const { data: userData } = await supabase.auth.admin.getUserById(empresa.profile_id)
         
         return {
           id: empresa.id,
