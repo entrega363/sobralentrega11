@@ -9,13 +9,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { entregadorRegisterSchema, type EntregadorRegisterInput } from '@/lib/validations/auth'
-import { useAuthStore } from '@/stores/auth-store'
+import { useAuth } from '@/components/providers/auth-provider'
 import { toast } from '@/hooks/use-toast'
 import { Eye, EyeOff } from 'lucide-react'
 
 export function EntregadorRegisterForm() {
   const router = useRouter()
-  const { signUp } = useAuthStore()
+  const { signUp } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -89,7 +89,15 @@ export function EntregadorRegisterForm() {
       const validatedData = entregadorRegisterSchema.parse(formData)
 
       // Registrar usuário
-      await signUp(validatedData)
+      await signUp(validatedData.email, validatedData.password, {
+        role: 'entregador',
+        nome: validatedData.nome,
+        cpf: validatedData.cpf,
+        telefone: validatedData.telefone,
+        endereco: validatedData.endereco,
+        veiculo: validatedData.veiculo,
+        cnh: validatedData.cnh,
+      })
 
       toast({
         title: 'Cadastro realizado com sucesso!',
