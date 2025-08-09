@@ -81,13 +81,17 @@ export function EntregadorRegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    console.log('Form submitted!', formData)
     setIsLoading(true)
     setErrors({})
 
     try {
+      console.log('Validating data...')
       // Validar dados
       const validatedData = entregadorRegisterSchema.parse(formData)
+      console.log('Data validated:', validatedData)
 
+      console.log('Calling signUp...')
       // Registrar usuário
       await signUp(validatedData.email, validatedData.password, {
         role: 'entregador',
@@ -99,6 +103,7 @@ export function EntregadorRegisterForm() {
         cnh: validatedData.cnh,
       })
 
+      console.log('SignUp successful!')
       toast({
         title: 'Cadastro realizado com sucesso!',
         description: 'Bem-vindo ao sistema de entregas de Sobral',
@@ -116,6 +121,7 @@ export function EntregadorRegisterForm() {
           fieldErrors[field] = err.message
         })
         setErrors(fieldErrors)
+        console.log('Validation errors:', fieldErrors)
       } else {
         toast({
           title: 'Erro no cadastro',

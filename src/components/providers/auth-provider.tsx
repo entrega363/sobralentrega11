@@ -217,7 +217,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 profile_id: data.user!.id,
                 nome: userData.nome,
                 cpf: userData.cpf,
-                telefone: userData.telefone,
+                contato: {
+                  telefone: userData.telefone,
+                  cnh: userData.cnh
+                },
                 veiculo: userData.veiculo,
                 endereco: userData.endereco,
                 status: 'pendente'
