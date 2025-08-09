@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { useCartStore } from '@/stores/cart-store'
 import { CartItemComponent } from './cart-item'
+import { CheckoutModal } from './checkout-modal'
 import { formatCurrency } from '@/lib/utils'
 import { X, ShoppingBag, CreditCard } from 'lucide-react'
 import { useState } from 'react'
@@ -18,7 +19,7 @@ export function CartSidebar() {
     clearCart 
   } = useCartStore()
   
-  const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false)
   
   const totalPrice = getTotalPrice()
   const totalItems = getTotalItems()
@@ -28,12 +29,7 @@ export function CartSidebar() {
   }
 
   const handleCheckout = () => {
-    setIsCheckingOut(true)
-    // TODO: Implementar modal de checkout
-    setTimeout(() => {
-      setIsCheckingOut(false)
-      alert('Checkout será implementado em breve!')
-    }, 1000)
+    setIsCheckoutModalOpen(true)
   }
 
   if (!isOpen) return null
@@ -111,21 +107,11 @@ export function CartSidebar() {
                 <div className="space-y-2">
                   <Button
                     onClick={handleCheckout}
-                    disabled={isCheckingOut}
                     className="w-full"
                     size="lg"
                   >
-                    {isCheckingOut ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Processando...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="h-4 w-4 mr-2" />
-                        Finalizar Pedido
-                      </>
-                    )}
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Finalizar Pedido
                   </Button>
                   
                   <Button
@@ -142,6 +128,12 @@ export function CartSidebar() {
           )}
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      <CheckoutModal 
+        isOpen={isCheckoutModalOpen} 
+        onClose={() => setIsCheckoutModalOpen(false)} 
+      />
     </>
   )
 }

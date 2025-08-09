@@ -20,12 +20,11 @@ export const itemPedidoSchema = z.object({
 })
 
 export const pedidoSchema = z.object({
-  consumidor_id: z.string().uuid('ID do consumidor inválido'),
   endereco_entrega: enderecoEntregaSchema,
   observacoes: z.string().max(300, 'Observações muito longas').optional(),
   forma_pagamento: z.enum(Object.values(FORMAS_PAGAMENTO) as any, {
     errorMap: () => ({ message: 'Forma de pagamento inválida' })
-  }).optional(),
+  }),
   tipo_entrega: z.enum(Object.values(TIPOS_ENTREGA) as any).default('sistema'),
   itens: z.array(itemPedidoSchema).min(1, 'Pedido deve ter pelo menos um item'),
 })
