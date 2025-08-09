@@ -9,12 +9,14 @@ import { ConnectionStatus } from '@/components/realtime/connection-status'
 import { useProdutos, useEmpresas } from '@/hooks/use-supabase'
 import { useAuthSelectors } from '@/stores/auth-store'
 import { formatCurrency } from '@/lib/utils'
-import { Search, ShoppingCart, Star, Clock, MapPin } from 'lucide-react'
+import { Search, ShoppingCart, Clock } from 'lucide-react'
+import { useCartStore } from '@/stores/cart-store'
 
 export function ConsumidorDashboard() {
   const [busca, setBusca] = useState('')
   const [filtroCategoria, setFiltroCategoria] = useState('')
   const { profile } = useAuthSelectors()
+  const { addItem } = useCartStore()
   
   const { data: produtos = [], isLoading: loadingProdutos, error: errorProdutos } = useProdutos()
   const { data: empresas = [], isLoading: loadingEmpresas, error: errorEmpresas } = useEmpresas()
@@ -182,7 +184,11 @@ export function ConsumidorDashboard() {
                 )}
               </div>
               
-              <Button className="w-full" size="sm">
+              <Button 
+                className="w-full" 
+                size="sm"
+                onClick={() => addItem(produto)}
+              >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Adicionar ao Carrinho
               </Button>

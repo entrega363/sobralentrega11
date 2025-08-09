@@ -3,6 +3,7 @@
 import { useAuthSelectors, useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
 import { NotificationCenter } from '@/components/notifications/notification-center'
+import { CartButton } from '@/components/cart/cart-button'
 import { LogOut, User } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -59,6 +60,9 @@ export function DashboardHeader() {
               {getRoleLabel(userRole || '')}
             </span>
           </div>
+          
+          {/* Carrinho (apenas para consumidores) */}
+          {userRole === 'consumidor' && <CartButton />}
           
           {/* Centro de Notificações */}
           <NotificationCenter />

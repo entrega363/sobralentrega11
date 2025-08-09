@@ -1,5 +1,6 @@
 import { DashboardNav } from '@/components/layout/dashboard-nav'
 import { DashboardHeader } from '@/components/layout/dashboard-header'
+import { CartSidebar } from '@/components/cart/cart-sidebar'
 
 export default function DashboardLayout({
   children,
@@ -15,6 +16,7 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+      <CartSidebar />
     </div>
   )
 }
