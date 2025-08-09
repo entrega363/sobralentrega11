@@ -1,0 +1,27 @@
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#F8F9FA"/>
+  
+  <!-- Prato -->
+  <circle cx="200" cy="150" r="80" fill="#E9ECEF" stroke="#DEE2E6" stroke-width="2"/>
+  
+  <!-- Comida no prato -->
+  <circle cx="180" cy="140" r="15" fill="#FFC107"/>
+  <circle cx="220" cy="140" r="12" fill="#28A745"/>
+  <circle cx="200" cy="165" r="18" fill="#DC3545"/>
+  <circle cx="185" cy="170" r="8" fill="#17A2B8"/>
+  <circle cx="215" cy="170" r="10" fill="#6F42C1"/>
+  
+  <!-- Garfo e faca -->
+  <rect x="120" y="120" width="2" height="60" fill="#6C757D"/>
+  <rect x="115" y="115" width="12" height="2" fill="#6C757D"/>
+  <rect x="115" y="120" width="12" height="2" fill="#6C757D"/>
+  <rect x="115" y="125" width="12" height="2" fill="#6C757D"/>
+  
+  <rect x="278" y="120" width="2" height="60" fill="#6C757D"/>
+  <path d="M275 115 L285 125 L275 135 Z" fill="#6C757D"/>
+  
+  <!-- Texto -->
+  <text x="200" y="220" text-anchor="middle" fill="#6C757D" font-family="Arial, sans-serif" font-size="14">
+    Imagem do produto
+  </text>
+</svg>

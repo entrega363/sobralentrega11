@@ -160,15 +160,49 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Resumo do Pedido */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h3 className="font-semibold mb-2">Resumo do Pedido</h3>
-            <div className="space-y-1 text-sm">
+            <h3 className="font-semibold mb-3">Resumo do Pedido</h3>
+            <div className="space-y-3">
               {items.map((item) => (
-                <div key={item.id} className="flex justify-between">
-                  <span>{item.quantidade}x {item.nome}</span>
-                  <span>{formatCurrency(item.preco * item.quantidade)}</span>
+                <div key={item.id} className="flex items-center gap-3">
+                  {/* Imagem do produto */}
+                  <div className="flex-shrink-0">
+                    {item.imagem_url ? (
+                      <img
+                        src={item.imagem_url}
+                        alt={item.nome}
+                        className="w-12 h-12 object-cover rounded-lg border"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/placeholder-food.svg';
+                        }}
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg border flex items-center justify-center">
+                        <span className="text-lg">🍽️</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Informações do produto */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {item.quantidade}x {item.nome}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {item.empresa_nome}
+                        </p>
+                      </div>
+                      <span className="text-sm font-semibold text-gray-900 ml-2">
+                        {formatCurrency(item.preco * item.quantidade)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))}
-              <div className="border-t pt-1 mt-2 font-semibold flex justify-between">
+              
+              <div className="border-t pt-3 mt-3 font-semibold flex justify-between">
                 <span>Total:</span>
                 <span className="text-green-600">{formatCurrency(totalPrice)}</span>
               </div>

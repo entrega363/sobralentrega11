@@ -151,7 +151,35 @@ export function ConsumidorDashboard() {
       {/* Lista de Produtos */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {produtosFiltrados.map((produto: any) => (
-          <Card key={produto.id} className="hover:shadow-lg transition-shadow">
+          <Card key={produto.id} className="hover:shadow-lg transition-shadow overflow-hidden">
+            {/* Imagem do Produto */}
+            <div className="relative h-48 bg-gray-100">
+              {produto.imagem_url ? (
+                <img
+                  src={produto.imagem_url}
+                  alt={produto.nome}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    // Fallback para imagem padrão se a URL falhar
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder-food.svg';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                  <div className="text-center">
+                    <div className="text-4xl mb-2">🍽️</div>
+                    <p className="text-sm text-gray-500">Sem imagem</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute top-2 right-2">
+                <Badge variant="secondary" className="bg-white/90 text-gray-700">
+                  {produto.categoria}
+                </Badge>
+              </div>
+            </div>
+
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div className="flex-1">
@@ -160,7 +188,6 @@ export function ConsumidorDashboard() {
                     {produto.empresas?.nome}
                   </CardDescription>
                 </div>
-                <Badge variant="secondary">{produto.categoria}</Badge>
               </div>
             </CardHeader>
             
