@@ -6,10 +6,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { DeliveryTracker } from '@/components/delivery/delivery-tracker'
+import { RatingForm } from '@/components/ratings/rating-form'
 import { useAuthSelectors } from '@/stores/auth-store'
 import { usePedidosStore, useInitializeMockPedidos } from '@/stores/pedidos-store'
+import { useRatings } from '@/hooks/use-ratings'
 import { formatCurrency } from '@/lib/utils'
-import { Clock, MapPin, Package, RefreshCw, Truck } from 'lucide-react'
+import { Clock, MapPin, Package, RefreshCw, Truck, Star } from 'lucide-react'
 
 const statusColors = {
   pendente: 'bg-yellow-100 text-yellow-800',
@@ -36,9 +38,11 @@ const statusLabels = {
 export default function MeusPedidosPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [avaliarPedido, setAvaliarPedido] = useState<string | null>(null)
   const { user } = useAuthSelectors()
   const { pedidos, getPedidosByConsumidor } = usePedidosStore()
   const { initializeMockData } = useInitializeMockPedidos()
+  const { canRatePedido, getRatingForPedido } = useRatings()
 
   // Buscar pedidos do consumidor atual
   const meusPedidos = getPedidosByConsumidor(user?.id || 'consumer-1')
@@ -207,6 +211,57 @@ export default function MeusPedidosPage() {
                       status={pedido.status}
                       entregadorNome={pedido.entregador_nome}
                     />
+                  </div>
+                )}
+
+                {/* Avaliações */}
+                {pedido.status === 'entregue' && (
+                  <div className="border-t pt-3">
+                    {avaliarPedido === pedido.id ? (
+                      <div className="space-y-4">
+                        <RatingForm
+                          pedidoId={pedido.id}
+                          avaliadoId={pedido.empresa_id}
+                          avaliadoNome={pedido.empresa_nome}
+                          tipoAvaliacao="empresa"
+                          onSuccess={() => setAvaliarPedido(null)}
+                        />
+                        {pedido.entregador_id && (
+                          <RatingForm
+                            pedidoId={pedido.id}
+                            avaliadoId={pedido.entregador_id}
+                            avaliadoNome={pedido.entregador_nome || 'Entregador'}
+                            tipoAvaliacao="entregador"
+                            onSuccess={() => setAvaliarPedido(null)}
+                          />
+                        )}
+                        <Button 
+                          variant="outline" 
+                          onClick={() => setAvaliarPedido(null)}
+                          className="w-full"
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        {canRatePedido(pedido.id) ? (
+                          <Button 
+                            size="sm" 
+                            onClick={() => setAvaliarPedido(pedido.id)}
+                            className="flex-1"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Avaliar Pedido
+                          </Button>
+                        ) : (
+                          <div className="flex items-center gap-2 text-sm text-green-600">
+                            <Star className="h-4 w-4 fill-current" />
+                            Pedido já avaliado
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>
