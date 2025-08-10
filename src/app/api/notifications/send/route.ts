@@ -58,7 +58,11 @@ export async function POST(request: NextRequest) {
         return { success: true, userType: sub.user_type }
       } catch (error) {
         console.error('Erro ao enviar notificação:', error)
-        return { success: false, error: error.message, userType: sub.user_type }
+        return { 
+          success: false, 
+          error: error instanceof Error ? error.message : 'Erro desconhecido', 
+          userType: sub.user_type 
+        }
       }
     })
 
