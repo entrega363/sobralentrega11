@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { NotificationSettings } from '@/components/notifications/notification-settings'
 import { useAuthSelectors } from '@/stores/auth-store'
 import { toast } from '@/hooks/use-toast'
 import { Save, User, Phone, MapPin, Mail, RefreshCw } from 'lucide-react'
@@ -365,6 +366,9 @@ export default function ConfiguracoesPage() {
           </Button>
         </div>
       </form>
+
+      {/* Configurações de Notificação */}
+      <NotificationSettings />
     </div>
   )
 }

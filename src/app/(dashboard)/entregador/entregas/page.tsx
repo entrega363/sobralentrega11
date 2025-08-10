@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,14 +8,42 @@ import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Search, MapPin, Clock, Phone, CheckCircle } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
+import { usePedidosStore, useInitializeMockPedidos } from '@/stores/pedidos-store'
+import { useAuthSelectors } from '@/stores/auth-store'
 
 export default function EntregasPage() {
   const [busca, setBusca] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  
+  const { user } = useAuthSelectors()
+  const { pedidos, updatePedidoStatus } = usePedidosStore()
+  const { initializeMockData } = useInitializeMockPedidos()
 
-  // Dados mockados para demonstração
-  const [entregas, setEntregas] = useState([
+  // Inicializar dados mockados na primeira vez
+  useEffect(() => {
+    if (pedidos.length === 0) {
+      initializeMockData()
+    }
+  }, [])
+
+  // Converter pedidos para formato de entregas
+  const entregas = pedidos
+    .filter(pedido => ['saiu_entrega', 'pronto'].includes(pedido.status))
+    .map(pedido => ({
+      id: pedido.id,
+      pedido_numero: pedido.numero,
+      cliente: pedido.consumidor_nome,
+      telefone: pedido.telefone,
+      endereco: pedido.endereco,
+      status: pedido.status === 'pronto' ? 'pendente' : 'em_transito',
+      valor: pedido.total,
+      tempo_estimado: '25 min',
+      distancia: '2.5 km'
+    }))
+
+  // Dados mockados adicionais para demonstração (remover quando tiver dados reais)
+  const [entregasExtras, setEntregasExtras] = useState([
     {
       id: '1',
       pedido_numero: '#001',
@@ -40,18 +68,32 @@ export default function EntregasPage() {
     }
   ])
 
+  // Combinar entregas reais com mockadas
+  const todasEntregas = [...entregas, ...entregasExtras]
+
   const handleAceitarEntrega = async (entregaId: string) => {
     setIsLoading(true)
     try {
       // Simular chamada à API
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      // Atualizar o status da entrega
-      setEntregas(prev => prev.map(entrega => 
-        entrega.id === entregaId 
-          ? { ...entrega, status: 'em_transito' }
-          : entrega
-      ))
+      // Verificar se é um pedido real ou mockado
+      const pedidoReal = pedidos.find(p => p.id === entregaId)
+      
+      if (pedidoReal) {
+        // Atualizar pedido real no store
+        updatePedidoStatus(entregaId, 'saiu_entrega', {
+          id: user?.id || 'entregador-1',
+          nome: 'Entregador Sobral'
+        })
+      } else {
+        // Atualizar entrega mockada
+        setEntregasExtras(prev => prev.map(entrega => 
+          entrega.id === entregaId 
+            ? { ...entrega, status: 'em_transito' }
+            : entrega
+        ))
+      }
       
       toast({
         title: 'Entrega aceita!',
@@ -74,8 +116,19 @@ export default function EntregasPage() {
       // Simular chamada à API
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      // Remover a entrega da lista (já que foi entregue)
-      setEntregas(prev => prev.filter(entrega => entrega.id !== entregaId))
+      // Verificar se é um pedido real ou mockado
+      const pedidoReal = pedidos.find(p => p.id === entregaId)
+      
+      if (pedidoReal) {
+        // Atualizar pedido real no store - marca como entregue
+        updatePedidoStatus(entregaId, 'entregue', {
+          id: user?.id || 'entregador-1',
+          nome: 'Entregador Sobral'
+        })
+      } else {
+        // Remover entrega mockada da lista
+        setEntregasExtras(prev => prev.filter(entrega => entrega.id !== entregaId))
+      }
       
       toast({
         title: 'Entrega concluída!',
@@ -117,7 +170,7 @@ export default function EntregasPage() {
     }
   }
 
-  const entregasFiltradas = entregas.filter(entrega => {
+  const entregasFiltradas = todasEntregas.filter(entrega => {
     const matchBusca = !busca || 
       entrega.cliente.toLowerCase().includes(busca.toLowerCase()) ||
       entrega.pedido_numero.toLowerCase().includes(busca.toLowerCase())
