@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createRouteHandlerClient } from '@/lib/supabase/server'
 import webpush from 'web-push'
 
 // Configurar VAPID keys (você deve gerar suas próprias chaves para produção)
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = createRouteHandlerClient()
 
     // Buscar subscriptions do usuário ou de todos os usuários de um tipo
     let query = supabase
