@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@/lib/supabase/server'
 import webpush from 'web-push'
 
-// Configurar VAPID keys (você deve gerar suas próprias chaves para produção)
-webpush.setVapidDetails(
-  'mailto:suporte@entregasobral.com.br',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI',
-  process.env.VAPID_PRIVATE_KEY || 'your-private-vapid-key-here'
-)
+// Configurar VAPID keys apenas se estiverem definidas
+if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    'mailto:suporte@entregasobral.com.br',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+    process.env.VAPID_PRIVATE_KEY
+  )
+}
 
 export async function POST(request: NextRequest) {
   try {

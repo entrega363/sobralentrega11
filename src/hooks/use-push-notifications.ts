@@ -76,9 +76,17 @@ export function usePushNotifications() {
 
       const registration = await navigator.serviceWorker.ready
       
-      // Chave pública VAPID (você deve gerar uma para produção)
-      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || 
-        'BEl62iUYgUivxIkv69yViEuiBIa40HI80NqIUHI80NqIUHI80NqIUHI80NqIUHI80NqI'
+      // Chave pública VAPID (deve ser configurada nas variáveis de ambiente)
+      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+      
+      if (!vapidPublicKey) {
+        toast({
+          title: 'Configuração incompleta',
+          description: 'Notificações push não estão configuradas no servidor',
+          variant: 'destructive'
+        })
+        return false
+      }
 
       const sub = await registration.pushManager.subscribe({
         userVisibleOnly: true,
