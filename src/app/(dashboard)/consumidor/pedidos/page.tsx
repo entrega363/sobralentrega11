@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+import { DeliveryTracker } from '@/components/delivery/delivery-tracker'
 import { useAuthSelectors } from '@/stores/auth-store'
 import { usePedidosStore, useInitializeMockPedidos } from '@/stores/pedidos-store'
 import { formatCurrency } from '@/lib/utils'
@@ -197,6 +198,17 @@ export default function MeusPedidosPage() {
                     ))}
                   </div>
                 </div>
+
+                {/* Rastreamento de Entrega */}
+                {pedido.status === 'saiu_entrega' && (
+                  <div className="border-t pt-3">
+                    <DeliveryTracker 
+                      pedidoId={pedido.id}
+                      status={pedido.status}
+                      entregadorNome={pedido.entregador_nome}
+                    />
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { DeliveryMap } from '@/components/delivery/delivery-map'
 import { Search, MapPin, Clock, Phone, CheckCircle } from 'lucide-react'
 import { toast } from '@/hooks/use-toast'
 import { usePedidosStore, useInitializeMockPedidos } from '@/stores/pedidos-store'
@@ -189,6 +190,9 @@ export default function EntregasPage() {
           Gerencie suas entregas pendentes e em andamento
         </p>
       </div>
+
+      {/* Mapa de Rastreamento */}
+      <DeliveryMap />
 
       {/* Filtros */}
       <div className="flex flex-col sm:flex-row gap-4">
