@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { toast } from '@/hooks/use-toast'
 
-interface GeolocationPosition {
+interface CustomGeolocationPosition {
   latitude: number
   longitude: number
   accuracy: number
@@ -20,12 +20,12 @@ interface UseGeolocationOptions {
   timeout?: number
   maximumAge?: number
   watchPosition?: boolean
-  onLocationUpdate?: (position: GeolocationPosition) => void
+  onLocationUpdate?: (position: CustomGeolocationPosition) => void
   onError?: (error: GeolocationError) => void
 }
 
 export function useGeolocation(options: UseGeolocationOptions = {}) {
-  const [position, setPosition] = useState<GeolocationPosition | null>(null)
+  const [position, setPosition] = useState<CustomGeolocationPosition | null>(null)
   const [error, setError] = useState<GeolocationError | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isSupported, setIsSupported] = useState(false)
@@ -45,7 +45,7 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
   }, [])
 
   const handleSuccess = useCallback((pos: GeolocationPosition) => {
-    const newPosition: GeolocationPosition = {
+    const newPosition: CustomGeolocationPosition = {
       latitude: pos.coords.latitude,
       longitude: pos.coords.longitude,
       accuracy: pos.coords.accuracy,
