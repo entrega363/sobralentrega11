@@ -7,13 +7,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Search, MapPin, Clock, Phone, CheckCircle } from 'lucide-react'
+import { toast } from '@/hooks/use-toast'
 
 export default function EntregasPage() {
   const [busca, setBusca] = useState('')
   const [filtroStatus, setFiltroStatus] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
   // Dados mockados para demonstração
-  const entregas = [
+  const [entregas, setEntregas] = useState([
     {
       id: '1',
       pedido_numero: '#001',
@@ -36,7 +38,66 @@ export default function EntregasPage() {
       tempo_estimado: '15 min',
       distancia: '1.8 km'
     }
-  ]
+  ])
+
+  const handleAceitarEntrega = async (entregaId: string) => {
+    setIsLoading(true)
+    try {
+      // Simular chamada à API
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Atualizar o status da entrega
+      setEntregas(prev => prev.map(entrega => 
+        entrega.id === entregaId 
+          ? { ...entrega, status: 'em_transito' }
+          : entrega
+      ))
+      
+      toast({
+        title: 'Entrega aceita!',
+        description: 'Você aceitou a entrega. Dirija-se ao restaurante para buscar o pedido.',
+      })
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível aceitar a entrega. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleMarcarComoEntregue = async (entregaId: string) => {
+    setIsLoading(true)
+    try {
+      // Simular chamada à API
+      await new Promise(resolve => setTimeout(resolve, 1000))
+      
+      // Remover a entrega da lista (já que foi entregue)
+      setEntregas(prev => prev.filter(entrega => entrega.id !== entregaId))
+      
+      toast({
+        title: 'Entrega concluída!',
+        description: 'Parabéns! A entrega foi marcada como concluída com sucesso.',
+      })
+    } catch (error) {
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível marcar como entregue. Tente novamente.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleVerDetalhes = (entrega: any) => {
+    toast({
+      title: `Detalhes do Pedido ${entrega.pedido_numero}`,
+      description: `Cliente: ${entrega.cliente} | Valor: R$ ${entrega.valor.toFixed(2)} | ${entrega.endereco}`,
+    })
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -147,17 +208,32 @@ export default function EntregasPage() {
                 
                 <div className="flex gap-2 pt-2">
                   {entrega.status === 'pendente' && (
-                    <Button size="sm" className="flex-1">
-                      Aceitar Entrega
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleAceitarEntrega(entrega.id)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Aceitando...' : 'Aceitar Entrega'}
                     </Button>
                   )}
                   {entrega.status === 'em_transito' && (
-                    <Button size="sm" className="flex-1">
+                    <Button 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => handleMarcarComoEntregue(entrega.id)}
+                      disabled={isLoading}
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
-                      Marcar como Entregue
+                      {isLoading ? 'Finalizando...' : 'Marcar como Entregue'}
                     </Button>
                   )}
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={isLoading}
+                    onClick={() => handleVerDetalhes(entrega)}
+                  >
                     Ver Detalhes
                   </Button>
                 </div>
