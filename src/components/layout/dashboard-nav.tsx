@@ -13,7 +13,8 @@ import {
   Users, 
   Settings,
   Home,
-  Star
+  Star,
+  MessageCircle
 } from 'lucide-react'
 
 const navigationItems = {
@@ -23,6 +24,7 @@ const navigationItems = {
     { name: 'Entregadores', href: '/admin/entregadores', icon: Truck },
     { name: 'Consumidores', href: '/admin/consumidores', icon: Users },
     { name: 'Pedidos', href: '/admin/pedidos', icon: ShoppingCart },
+    { name: 'Chat', href: '/chat', icon: MessageCircle },
     { name: 'Relatórios', href: '/admin/relatorios', icon: BarChart3 },
     { name: 'Configurações', href: '/admin/configuracoes', icon: Settings },
   ],
@@ -30,6 +32,7 @@ const navigationItems = {
     { name: 'Dashboard', href: '/empresa', icon: Home },
     { name: 'Produtos', href: '/empresa/produtos', icon: Package },
     { name: 'Pedidos', href: '/empresa/pedidos', icon: ShoppingCart },
+    { name: 'Chat', href: '/chat', icon: MessageCircle },
     { name: 'Avaliações', href: '/empresa/avaliacoes', icon: Star },
     { name: 'Configurações', href: '/empresa/configuracoes', icon: Settings },
   ],
@@ -37,6 +40,7 @@ const navigationItems = {
     { name: 'Dashboard', href: '/entregador', icon: Home },
     { name: 'Entregas', href: '/entregador/entregas', icon: Truck },
     { name: 'Histórico', href: '/entregador/historico', icon: BarChart3 },
+    { name: 'Chat', href: '/chat', icon: MessageCircle },
     { name: 'Avaliações', href: '/entregador/avaliacoes', icon: Star },
     { name: 'Configurações', href: '/entregador/configuracoes', icon: Settings },
   ],
@@ -44,6 +48,7 @@ const navigationItems = {
     { name: 'Marketplace', href: '/consumidor', icon: Home },
     { name: 'Meus Pedidos', href: '/consumidor/pedidos', icon: ShoppingCart },
     { name: 'Favoritos', href: '/consumidor/favoritos', icon: Star },
+    { name: 'Chat', href: '/chat', icon: MessageCircle },
     { name: 'Configurações', href: '/consumidor/configuracoes', icon: Settings },
   ],
 }
