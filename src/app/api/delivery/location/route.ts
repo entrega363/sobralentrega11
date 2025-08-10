@@ -64,22 +64,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Enviar notificação em tempo real via Supabase Realtime
-    const { error: realtimeError } = await supabase
-      .channel('delivery-tracking')
-      .send({
-        type: 'broadcast',
-        event: 'location-update',
-        payload: {
-          pedidoId,
-          entregadorId,
-          latitude,
-          longitude,
-          accuracy,
-          timestamp
-        }
-      })
-
-    if (realtimeError) {
+    try {
+      await supabase
+        .channel('delivery-tracking')
+        .send({
+          type: 'broadcast',
+          event: 'location-update',
+          payload: {
+            pedidoId,
+            entregadorId,
+            latitude,
+            longitude,
+            accuracy,
+            timestamp
+          }
+        })
+    } catch (realtimeError) {
       console.error('Erro ao enviar atualização em tempo real:', realtimeError)
     }
 
