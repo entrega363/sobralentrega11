@@ -133,14 +133,13 @@ export default function ConsumidorRelatoriosPage() {
             <Card>
               <CardContent>
                 <EmptyState
+                  icon="📊"
                   title="Nenhum relatório salvo"
                   description="Crie relatórios para entender melhor seus hábitos de consumo."
-                  action={
-                    <Button onClick={() => setActiveTab('builder')}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Criar Relatório
-                    </Button>
-                  }
+                  action={{
+                    label: "Criar Relatório",
+                    onClick: () => setActiveTab('builder')
+                  }}
                 />
               </CardContent>
             </Card>

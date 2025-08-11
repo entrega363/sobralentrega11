@@ -134,14 +134,13 @@ export default function EmpresaRelatoriosPage() {
             <Card>
               <CardContent>
                 <EmptyState
+                  icon="📊"
                   title="Nenhum relatório salvo"
                   description="Crie seu primeiro relatório personalizado para analisar seu negócio."
-                  action={
-                    <Button onClick={() => setActiveTab('builder')}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Criar Primeiro Relatório
-                    </Button>
-                  }
+                  action={{
+                    label: "Criar Primeiro Relatório",
+                    onClick: () => setActiveTab('builder')
+                  }}
                 />
               </CardContent>
             </Card>
