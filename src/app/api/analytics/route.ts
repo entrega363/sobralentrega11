@@ -69,8 +69,8 @@ async function getEmpresaAnalytics(supabase: any, userId: string, startDate: Dat
     .lte('created_at', endDate.toISOString())
 
   const totalPedidos = pedidos?.length || 0
-  const pedidosEntregues = pedidos?.filter(p => p.status === 'entregue') || []
-  const totalVendas = pedidosEntregues.reduce((sum, p) => sum + (p.valor_total || 0), 0)
+  const pedidosEntregues = pedidos?.filter((p: any) => p.status === 'entregue') || []
+  const totalVendas = pedidosEntregues.reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0)
   const ticketMedio = pedidosEntregues.length > 0 ? totalVendas / pedidosEntregues.length : 0
 
   // Pedidos por dia
