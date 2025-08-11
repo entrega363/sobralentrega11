@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { StatusDisponibilidadeComponent } from '@/components/entregador/status-disponibilidade'
-import { ConvitesPendentes } from '@/components/entregador/convites-pendentes'
+// import { ConvitesPendentes } from '@/components/entregador/convites-pendentes'
 import { Settings, Bell, Truck, Building2 } from 'lucide-react'
 
 interface EntregadorData {
@@ -164,8 +164,8 @@ export default function StatusDisponibilidadePage() {
         </Card>
       )}
 
-      {/* Convites Pendentes */}
-      {convitesPendentes.length > 0 && (
+      {/* Convites Pendentes - Temporariamente comentado para deploy */}
+      {/* {convitesPendentes.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -184,7 +184,7 @@ export default function StatusDisponibilidadePage() {
             />
           </CardContent>
         </Card>
-      )}
+      )} */}
 
       {/* Histórico de Status */}
       <Card>
