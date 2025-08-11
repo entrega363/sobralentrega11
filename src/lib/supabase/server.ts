@@ -33,3 +33,6 @@ export const createRouteHandlerClient = () => {
     }
   )
 }
+
+// Alias para compatibilidade
+export const createClient = createRouteHandlerClient

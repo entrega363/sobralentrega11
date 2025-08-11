@@ -4,6 +4,8 @@ import { validateCriarGarcom } from '@/lib/validations/garcom'
 import { GARCOM_ERRORS } from '@/types/garcom'
 import bcrypt from 'bcryptjs'
 
+export const runtime = 'nodejs'
+
 // GET - Listar garçons da empresa
 export async function GET(request: NextRequest) {
   try {

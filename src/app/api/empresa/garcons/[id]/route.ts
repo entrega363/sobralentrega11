@@ -4,6 +4,8 @@ import { validateAtualizarGarcom } from '@/lib/validations/garcom'
 import { GARCOM_ERRORS } from '@/types/garcom'
 import bcrypt from 'bcryptjs'
 
+export const runtime = 'nodejs'
+
 // PUT - Atualizar garçom
 export async function PUT(
   request: NextRequest,

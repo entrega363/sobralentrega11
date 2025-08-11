@@ -3,6 +3,8 @@ import { requireGarcomAuth, hasPermission } from '@/lib/auth/garcom-auth'
 import { validateAtualizarPedidoLocal } from '@/lib/validations/garcom'
 import { createClient } from '@/lib/supabase/server'
 
+export const runtime = 'nodejs'
+
 // PUT /api/comanda/pedidos/[id] - Editar/cancelar pedido local
 export const PUT = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {

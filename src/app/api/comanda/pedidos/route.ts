@@ -3,6 +3,8 @@ import { requireGarcomAuth } from '@/lib/auth/garcom-auth'
 import { validateCriarPedidoLocal } from '@/lib/validations/garcom'
 import { createClient } from '@/lib/supabase/server'
 
+export const runtime = 'nodejs'
+
 // GET /api/comanda/pedidos - Listar pedidos do garçom
 export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {

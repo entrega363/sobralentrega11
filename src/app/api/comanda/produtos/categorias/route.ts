@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireGarcomAuth } from '@/lib/auth/garcom-auth'
 import { createClient } from '@/lib/supabase/server'
 
+export const runtime = 'nodejs'
+
 // GET /api/comanda/produtos/categorias - Listar categorias disponíveis
 export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {
