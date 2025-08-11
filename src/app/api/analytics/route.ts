@@ -91,7 +91,7 @@ async function getEmpresaAnalytics(supabase: any, userId: string, startDate: Dat
     .lte('created_at', endDate.toISOString())
 
   const avaliacaoMedia = avaliacoes?.length > 0 
-    ? avaliacoes.reduce((sum, a) => sum + a.rating, 0) / avaliacoes.length 
+    ? avaliacoes.reduce((sum: number, a: any) => sum + a.rating, 0) / avaliacoes.length 
     : 0
 
   // Métricas específicas da empresa

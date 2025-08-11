@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Plus, X, Save, Play, Template } from 'lucide-react'
+import { Plus, X, Save, Play, FileText } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { ReportTemplates } from './report-templates'
 
@@ -230,7 +230,7 @@ export function CustomReportBuilder({ userType, onSave, onRun }: CustomReportBui
       <Tabs defaultValue="builder" className="space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="templates">
-            <Template className="h-4 w-4 mr-2" />
+            <FileText className="h-4 w-4 mr-2" />
             Templates
           </TabsTrigger>
           <TabsTrigger value="builder">
