@@ -1,13 +1,31 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
+import { getGarcomFromRequest } from '@/lib/auth/garcom-auth'
 
 export async function middleware(request: NextRequest) {
   try {
-    // Update session and handle auth routing
+    const { pathname } = request.nextUrl
+    
+    // Handle comanda routes (garçom authentication)
+    if (pathname.startsWith('/comanda')) {
+      // Allow access to login page
+      if (pathname === '/comanda/login') {
+        return NextResponse.next()
+      }
+      
+      // Check garçom authentication for other comanda routes
+      const garcom = getGarcomFromRequest(request)
+      if (!garcom) {
+        return NextResponse.redirect(new URL('/comanda/login', request.url))
+      }
+      
+      return NextResponse.next()
+    }
+    
+    // Handle regular dashboard routes (supabase auth)
     const response = await updateSession(request)
     
     // Allow access to auth pages and public routes
-    const { pathname } = request.nextUrl
     const isAuthPage = pathname.startsWith('/login') || 
                       pathname.startsWith('/register') || 
                       pathname.startsWith('/forgot-password')

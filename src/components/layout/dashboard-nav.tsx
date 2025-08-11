@@ -14,7 +14,8 @@ import {
   Settings,
   Home,
   Star,
-  MessageCircle
+  MessageCircle,
+  UserCheck
 } from 'lucide-react'
 
 const navigationItems = {
@@ -25,22 +26,31 @@ const navigationItems = {
     { name: 'Consumidores', href: '/admin/consumidores', icon: Users },
     { name: 'Pedidos', href: '/admin/pedidos', icon: ShoppingCart },
     { name: 'Chat', href: '/chat', icon: MessageCircle },
+    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
     { name: 'Relatórios', href: '/admin/relatorios', icon: BarChart3 },
+    { name: 'Relatórios Personalizados', href: '/admin/relatorios-personalizados', icon: BarChart3 },
     { name: 'Configurações', href: '/admin/configuracoes', icon: Settings },
   ],
   empresa: [
     { name: 'Dashboard', href: '/empresa', icon: Home },
     { name: 'Produtos', href: '/empresa/produtos', icon: Package },
     { name: 'Pedidos', href: '/empresa/pedidos', icon: ShoppingCart },
+    { name: 'Garçons', href: '/empresa/garcons', icon: UserCheck },
+    { name: 'Entregadores Fixos', href: '/empresa/entregadores-fixos', icon: Truck },
     { name: 'Chat', href: '/chat', icon: MessageCircle },
+    { name: 'Analytics', href: '/empresa/analytics', icon: BarChart3 },
+    { name: 'Relatórios', href: '/empresa/relatorios', icon: BarChart3 },
     { name: 'Avaliações', href: '/empresa/avaliacoes', icon: Star },
     { name: 'Configurações', href: '/empresa/configuracoes', icon: Settings },
   ],
   entregador: [
     { name: 'Dashboard', href: '/entregador', icon: Home },
     { name: 'Entregas', href: '/entregador/entregas', icon: Truck },
+    { name: 'Status de Disponibilidade', href: '/entregador/status-disponibilidade', icon: UserCheck },
     { name: 'Histórico', href: '/entregador/historico', icon: BarChart3 },
     { name: 'Chat', href: '/chat', icon: MessageCircle },
+    { name: 'Analytics', href: '/entregador/analytics', icon: BarChart3 },
+    { name: 'Relatórios', href: '/entregador/relatorios', icon: BarChart3 },
     { name: 'Avaliações', href: '/entregador/avaliacoes', icon: Star },
     { name: 'Configurações', href: '/entregador/configuracoes', icon: Settings },
   ],
@@ -49,6 +59,8 @@ const navigationItems = {
     { name: 'Meus Pedidos', href: '/consumidor/pedidos', icon: ShoppingCart },
     { name: 'Favoritos', href: '/consumidor/favoritos', icon: Star },
     { name: 'Chat', href: '/chat', icon: MessageCircle },
+    { name: 'Analytics', href: '/consumidor/analytics', icon: BarChart3 },
+    { name: 'Relatórios', href: '/consumidor/relatorios', icon: BarChart3 },
     { name: 'Configurações', href: '/consumidor/configuracoes', icon: Settings },
   ],
 }
