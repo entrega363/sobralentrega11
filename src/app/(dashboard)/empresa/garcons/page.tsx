@@ -87,7 +87,7 @@ export default function GarconsPage() {
     }
   }
 
-  const handleEditGarcom = (garcom: Garcom) => {
+  const handleEditGarcom = (garcom: Garcom | any) => {
     setEditingGarcom(garcom)
     setShowModal(true)
   }
