@@ -184,7 +184,7 @@ function processMetrics(data: any[], metrics: any[], groupBy?: string) {
     const result: any = { group }
     
     metrics.forEach(metric => {
-      result[metric.name] = calculateMetric(groupData, metric)
+      result[metric.name] = calculateMetric(groupData as any[], metric)
     })
     
     return result
