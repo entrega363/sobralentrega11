@@ -102,12 +102,12 @@ async function getEmpresaAnalytics(supabase: any, userId: string, startDate: Dat
     totalVendas,
     ticketMedio,
     crescimentoMensal: 12, // Calcular baseado em dados históricos
-    pedidosHoje: pedidos?.filter(p => isToday(new Date(p.created_at))).length || 0,
-    vendasHoje: pedidos?.filter(p => isToday(new Date(p.created_at)) && p.status === 'entregue')
-      .reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
-    pedidosSemana: pedidos?.filter(p => isThisWeek(new Date(p.created_at))).length || 0,
-    vendasSemana: pedidos?.filter(p => isThisWeek(new Date(p.created_at)) && p.status === 'entregue')
-      .reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
+    pedidosHoje: pedidos?.filter((p: any) => isToday(new Date(p.created_at))).length || 0,
+    vendasHoje: pedidos?.filter((p: any) => isToday(new Date(p.created_at)) && p.status === 'entregue')
+      .reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
+    pedidosSemana: pedidos?.filter((p: any) => isThisWeek(new Date(p.created_at))).length || 0,
+    vendasSemana: pedidos?.filter((p: any) => isThisWeek(new Date(p.created_at)) && p.status === 'entregue')
+      .reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
     pedidosMes: totalPedidos,
     vendasMes: totalVendas,
     vendasPorDia,
@@ -136,9 +136,9 @@ async function getEntregadorAnalytics(supabase: any, userId: string, startDate: 
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString())
 
-  const entregasRealizadas = entregas?.filter(e => e.status === 'entregue').length || 0
-  const totalGanhos = entregas?.filter(e => e.status === 'entregue')
-    .reduce((sum, e) => sum + (e.taxa_entrega || 0), 0) || 0
+  const entregasRealizadas = entregas?.filter((e: any) => e.status === 'entregue').length || 0
+  const totalGanhos = entregas?.filter((e: any) => e.status === 'entregue')
+    .reduce((sum: number, e: any) => sum + (e.taxa_entrega || 0), 0) || 0
 
   // Tempo médio de entrega (simulado)
   const tempoMedioEntrega = 25
