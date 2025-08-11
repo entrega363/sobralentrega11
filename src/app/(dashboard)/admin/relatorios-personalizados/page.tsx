@@ -85,14 +85,13 @@ export default function AdminRelatoriosPersonalizadosPage() {
             <Card>
               <CardContent>
                 <EmptyState
+                  icon="📊"
                   title="Nenhum relatório salvo"
                   description="Crie seu primeiro relatório personalizado usando o construtor."
-                  action={
-                    <Button onClick={() => setActiveTab('builder')}>
-                      <FileText className="h-4 w-4 mr-2" />
-                      Criar Relatório
-                    </Button>
-                  }
+                  action={{
+                    label: "Criar Relatório",
+                    onClick: () => setActiveTab('builder')
+                  }}
                 />
               </CardContent>
             </Card>
