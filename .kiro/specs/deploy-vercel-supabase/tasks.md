@@ -12,7 +12,9 @@
 
   - _Requisitos: 1.1, 1.4_
 
-- [ ] 2. Setup do Supabase e configuração do banco de dados
+- [x] 2. Setup do Supabase e configuração do banco de dados
+
+
   - Criar projeto no Supabase e configurar variáveis de ambiente
 
 
@@ -20,6 +22,8 @@
   - Configurar Row Level Security (RLS) e políticas de acesso
   - Gerar tipos TypeScript automaticamente do schema Supabase
   - _Requisitos: 2.1, 2.2, 6.3_
+
+
 
 
 

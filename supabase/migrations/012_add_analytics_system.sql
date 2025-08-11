@@ -68,8 +68,8 @@ SELECT
   COUNT(*) as total_pedidos,
   COUNT(*) FILTER (WHERE status = 'entregue') as pedidos_entregues,
   COUNT(*) FILTER (WHERE status = 'cancelado') as pedidos_cancelados,
-  AVG(valor_total) as ticket_medio,
-  SUM(valor_total) as receita_total
+  AVG(total) as ticket_medio,
+  SUM(total) as receita_total
 FROM pedidos
 GROUP BY DATE_TRUNC('day', created_at)
 ORDER BY date DESC;
@@ -80,11 +80,11 @@ SELECT
   e.nome,
   COUNT(p.id) as total_entregas,
   COUNT(p.id) FILTER (WHERE p.status = 'entregue') as entregas_concluidas,
-  AVG(r.rating) as rating_medio,
+  AVG(r.nota_geral) as rating_medio,
   AVG(EXTRACT(EPOCH FROM (p.updated_at - p.created_at))/60) as tempo_medio_entrega
 FROM entregadores e
 LEFT JOIN pedidos p ON e.id = p.entregador_id
-LEFT JOIN ratings r ON p.id = r.pedido_id AND r.tipo_avaliado = 'entregador'
+LEFT JOIN avaliacoes r ON p.id = r.pedido_id AND r.tipo_avaliacao = 'entregador'
 GROUP BY e.id, e.nome;
 
 CREATE OR REPLACE VIEW empresas_metrics AS
@@ -92,12 +92,13 @@ SELECT
   emp.id,
   emp.nome,
   COUNT(p.id) as total_pedidos,
-  SUM(p.valor_total) as receita_total,
-  AVG(r.rating) as rating_medio,
+  SUM(p.total) as receita_total,
+  AVG(r.nota_geral) as rating_medio,
   COUNT(DISTINCT p.consumidor_id) as clientes_unicos
 FROM empresas emp
-LEFT JOIN pedidos p ON emp.id = p.empresa_id
-LEFT JOIN ratings r ON p.id = r.pedido_id AND r.tipo_avaliado = 'empresa'
+LEFT JOIN pedido_itens pi ON emp.id = pi.empresa_id
+LEFT JOIN pedidos p ON pi.pedido_id = p.id
+LEFT JOIN avaliacoes r ON p.id = r.pedido_id AND r.tipo_avaliacao = 'empresa'
 GROUP BY emp.id, emp.nome;
 
 -- Função para registrar eventos de analytics
@@ -137,13 +138,13 @@ BEGIN
       WHERE created_at BETWEEN p_period_start AND p_period_end;
       
     WHEN 'receita_total' THEN
-      SELECT COALESCE(SUM(valor_total), 0) INTO result
+      SELECT COALESCE(SUM(total), 0) INTO result
       FROM pedidos
       WHERE created_at BETWEEN p_period_start AND p_period_end
       AND status = 'entregue';
       
     WHEN 'ticket_medio' THEN
-      SELECT COALESCE(AVG(valor_total), 0) INTO result
+      SELECT COALESCE(AVG(total), 0) INTO result
       FROM pedidos
       WHERE created_at BETWEEN p_period_start AND p_period_end
       AND status = 'entregue';
@@ -175,8 +176,7 @@ BEGIN
       'pedido_criado',
       jsonb_build_object(
         'pedido_id', NEW.id,
-        'empresa_id', NEW.empresa_id,
-        'valor_total', NEW.valor_total
+        'valor_total', NEW.total
       )
     );
   ELSIF TG_OP = 'UPDATE' AND OLD.status != NEW.status THEN
@@ -230,23 +230,23 @@ CREATE POLICY "Users can manage their own reports" ON saved_reports
 CREATE POLICY "Admins can view all analytics" ON analytics_events
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM user_roles 
-      WHERE user_id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
 CREATE POLICY "Admins can view all KPIs" ON custom_kpis
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM user_roles 
-      WHERE user_id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );
 
 CREATE POLICY "Admins can view all reports" ON saved_reports
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM user_roles 
-      WHERE user_id = auth.uid() AND role = 'admin'
+      SELECT 1 FROM profiles 
+      WHERE id = auth.uid() AND role = 'admin'
     )
   );

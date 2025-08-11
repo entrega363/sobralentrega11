@@ -111,13 +111,6 @@ CREATE POLICY "Users can mark messages as read" ON mensagens
       WHERE conversas.id = mensagens.conversa_id 
       AND auth.uid() = ANY(conversas.participantes)
     )
-  )
-  WITH CHECK (
-    -- Só pode alterar o campo 'lida'
-    OLD.conversa_id = NEW.conversa_id AND
-    OLD.remetente_id = NEW.remetente_id AND
-    OLD.conteudo = NEW.conteudo AND
-    OLD.tipo_mensagem = NEW.tipo_mensagem
   );
 
 -- Admins podem gerenciar todas as mensagens

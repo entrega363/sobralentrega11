@@ -135,43 +135,36 @@ ALTER TABLE garcons ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Empresas podem ver seus próprios garçons" ON garcons
     FOR SELECT USING (
+        auth.uid() = garcons.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = garcons.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 
 CREATE POLICY "Empresas podem inserir garçons" ON garcons
     FOR INSERT WITH CHECK (
+        auth.uid() = garcons.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = garcons.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 
 CREATE POLICY "Empresas podem atualizar seus garçons" ON garcons
     FOR UPDATE USING (
+        auth.uid() = garcons.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = garcons.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 
-CREATE POLICY "Garçons podem ver seus próprios dados" ON garcons
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM profiles 
-            WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'garcom'
-            AND profiles.garcom_id = garcons.id
-        )
-    );
+-- Garçons não são profiles, então não precisam desta política
+-- A autenticação de garçons é feita via JWT customizado
 
 -- Políticas para tabela garcon_atividades
 ALTER TABLE garcon_atividades ENABLE ROW LEVEL SECURITY;
@@ -180,10 +173,13 @@ CREATE POLICY "Empresas podem ver atividades de seus garçons" ON garcon_ativida
     FOR SELECT USING (
         EXISTS (
             SELECT 1 FROM garcons g
-            JOIN profiles p ON p.empresa_id = g.empresa_id
             WHERE g.id = garcon_atividades.garcom_id
-            AND p.id = auth.uid()
-            AND p.role = 'empresa'
+            AND g.empresa_id = auth.uid()
+            AND EXISTS (
+                SELECT 1 FROM profiles p 
+                WHERE p.id = auth.uid() 
+                AND p.role = 'empresa'
+            )
         )
     );
 
@@ -200,10 +196,13 @@ CREATE POLICY "Empresas podem ver histórico de entregadores vinculados" ON entr
     FOR SELECT USING (
         EXISTS (
             SELECT 1 FROM empresa_entregador_fixo eef
-            JOIN profiles p ON p.empresa_id = eef.empresa_id
             WHERE eef.entregador_id = entregador_status_historico.entregador_id
-            AND p.id = auth.uid()
-            AND p.role = 'empresa'
+            AND eef.empresa_id = auth.uid()
+            AND EXISTS (
+                SELECT 1 FROM profiles p 
+                WHERE p.id = auth.uid() 
+                AND p.role = 'empresa'
+            )
         )
     );
 
@@ -215,11 +214,11 @@ ALTER TABLE empresa_entregador_fixo ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Empresas podem ver seus vínculos" ON empresa_entregador_fixo
     FOR SELECT USING (
+        auth.uid() = empresa_entregador_fixo.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = empresa_entregador_fixo.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 
@@ -228,21 +227,21 @@ CREATE POLICY "Entregadores podem ver vínculos com eles" ON empresa_entregador_
 
 CREATE POLICY "Empresas podem criar vínculos" ON empresa_entregador_fixo
     FOR INSERT WITH CHECK (
+        auth.uid() = empresa_entregador_fixo.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = empresa_entregador_fixo.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 
 CREATE POLICY "Empresas podem atualizar seus vínculos" ON empresa_entregador_fixo
     FOR UPDATE USING (
+        auth.uid() = empresa_entregador_fixo.empresa_id AND
         EXISTS (
             SELECT 1 FROM profiles 
             WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'empresa' 
-            AND profiles.empresa_id = empresa_entregador_fixo.empresa_id
+            AND profiles.role = 'empresa'
         )
     );
 

@@ -11,7 +11,9 @@
 
 
 
-- [ ] 2. Implementar modelos de dados TypeScript para garçons
+- [x] 2. Implementar modelos de dados TypeScript para garçons
+
+
   - Criar interfaces para Garcom, PedidoLocal e GarcomAtividade
 
 
@@ -27,6 +29,8 @@
   - Implementar GET /api/auth/garcom/me para dados do garçom autenticado
   - Implementar POST /api/auth/garcom/logout com registro de atividade
   - _Requirements: 2.1, 2.2, 2.3, 6.2_
+
+
 
 - [ ] 4. Implementar APIs para gerenciamento de garçons pela empresa
   - Implementar GET /api/empresa/garcons para listar garçons
@@ -51,10 +55,14 @@
 
 
 
+
+
   - _Requirements: 1.1, 1.2, 1.4, 6.4_
 
 - [ ] 6. Implementar modal de cadastro/edição de garçom
   - Criar componente GarcomFormModal com formulário completo
+
+
   - Implementar validações de usuário único e senha segura
   - Adicionar controles de permissões (criar, editar, cancelar pedidos)
   - Implementar feedback visual para sucesso/erro
@@ -74,11 +82,17 @@
   - Mostrar nome do garçom, empresa e botão de logout
   - Exibir lista de pedidos ativos com status em tempo real
   - Adicionar botão "Novo Pedido" e notificações de pedidos prontos
-  - _Requirements: 2.4, 4.1, 4.2, 4.3_- [
- ] 9. Criar APIs para pedidos locais
+  - _Requirements: 2.4, 4.1, 4.2, 4.3_
+
+
+
+- [x] 9. Criar APIs para pedidos locais
   - Implementar POST /api/comanda/pedidos para criar pedido local
   - Implementar GET /api/comanda/pedidos para listar pedidos do garçom
   - Implementar PUT /api/comanda/pedidos/[id] para editar/cancelar pedidos
+
+
+
   - Implementar GET /api/comanda/produtos para produtos da empresa
   - _Requirements: 3.1, 3.3, 3.4, 4.1, 4.4_
 

@@ -135,14 +135,4 @@ COMMENT ON COLUMN empresa_entregadores_fixos.status IS 'Status do relacionamento
 COMMENT ON COLUMN profiles.disponibilidade_entrega IS 'Disponibilidade do entregador: sistema (geral), empresa_fixa (só para empresa fixa), indisponivel';
 COMMENT ON COLUMN profiles.empresa_fixa_id IS 'ID da empresa para qual o entregador trabalha exclusivamente (se houver)';
 
--- Inserir dados de exemplo para teste
-INSERT INTO empresa_entregadores_fixos (empresa_id, entregador_id, status, salario_fixo, comissao_por_entrega, observacoes)
-SELECT 
-  (SELECT id FROM profiles WHERE email = 'matutaria@gmail.com' LIMIT 1),
-  (SELECT id FROM profiles WHERE email = 'entregasobrald@gmail.com' LIMIT 1),
-  'aceito',
-  1200.00,
-  5.00,
-  'Entregador principal da Matutaria'
-WHERE EXISTS (SELECT 1 FROM profiles WHERE email = 'matutaria@gmail.com')
-  AND EXISTS (SELECT 1 FROM profiles WHERE email = 'entregasobrald@gmail.com');
+-- Dados de exemplo removidos - serão inseridos via aplicação

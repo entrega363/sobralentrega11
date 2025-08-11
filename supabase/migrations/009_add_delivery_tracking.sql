@@ -49,9 +49,11 @@ CREATE POLICY "Consumidores can view their order locations" ON delivery_location
 CREATE POLICY "Empresas can view their order locations" ON delivery_locations
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM pedidos 
-      WHERE pedidos.id = delivery_locations.pedido_id 
-      AND pedidos.empresa_id = auth.uid()
+      SELECT 1 FROM pedidos p
+      JOIN pedido_itens pi ON p.id = pi.pedido_id
+      JOIN empresas e ON pi.empresa_id = e.id
+      WHERE p.id = delivery_locations.pedido_id 
+      AND e.profile_id = auth.uid()
     )
   );
 
@@ -108,16 +110,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE VIEW delivery_tracking_view AS
 SELECT 
   dl.*,
-  p.numero as pedido_numero,
-  p.consumidor_nome,
-  p.empresa_nome,
-  p.endereco as destino_endereco,
+  p.endereco_entrega as destino_endereco,
   p.status as pedido_status,
-  prof.nome as entregador_nome,
-  prof.telefone as entregador_telefone
+  e.nome as entregador_nome,
+  c.nome as consumidor_nome
 FROM delivery_locations dl
 JOIN pedidos p ON dl.pedido_id = p.id
-JOIN profiles prof ON dl.entregador_id = prof.id
+JOIN entregadores e ON dl.entregador_id = e.profile_id
+JOIN consumidores c ON p.consumidor_id = c.id
 WHERE p.status IN ('saiu_entrega', 'entregue');
 
 -- Comentários para documentação

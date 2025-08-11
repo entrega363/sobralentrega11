@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { useToast } from '@/hooks/use-toast'
 import { usePedidosLocais } from '@/hooks/use-pedidos-locais'
+import { NovoPedidoLocal } from '@/components/comanda/novo-pedido-local'
 import { 
   Plus, 
   LogOut, 
@@ -55,6 +56,7 @@ export default function ComandaDashboardPage() {
   const { toast } = useToast()
   
   const [garcom, setGarcom] = useState<GarcomData | null>(null)
+  const [showNovoPedido, setShowNovoPedido] = useState(false)
   
   const {
     pedidos,
@@ -109,10 +111,16 @@ export default function ComandaDashboardPage() {
       return
     }
     
-    // Navegar para tela de novo pedido (será implementada)
+    setShowNovoPedido(true)
+  }
+
+  const handlePedidoCriado = (novoPedido: any) => {
+    // Atualizar lista de pedidos
+    refetch()
+    
     toast({
-      title: 'Em desenvolvimento',
-      description: 'Funcionalidade de novo pedido será implementada em breve'
+      title: 'Pedido criado!',
+      description: `Pedido ${novoPedido.numero} criado para mesa ${novoPedido.mesa}`,
     })
   }
 
@@ -380,6 +388,13 @@ export default function ComandaDashboardPage() {
           </Card>
         )}
       </main>
+
+      {/* Modal Novo Pedido */}
+      <NovoPedidoLocal
+        isOpen={showNovoPedido}
+        onClose={() => setShowNovoPedido(false)}
+        onPedidoCriado={handlePedidoCriado}
+      />
     </div>
   )
 }

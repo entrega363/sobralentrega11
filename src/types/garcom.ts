@@ -266,6 +266,41 @@ export const validatePedidoLocalData = (data: CriarPedidoLocalData): string[] =>
   return errors
 }
 
+// Dados de autenticação do garçom
+export interface GarcomAuth {
+  garcom: Omit<Garcom, 'senha_hash'>
+  empresa: {
+    id: string
+    nome: string
+    ativo: boolean
+  }
+  token: string
+  expires_at: string
+}
+
+// Dados de sessão do garçom
+export interface GarcomSession {
+  garcom_id: string
+  empresa_id: string
+  nome: string
+  usuario: string
+  permissoes: GarcomPermissoes
+  empresa_nome: string
+  login_at: string
+}
+
+// Estatísticas do garçom
+export interface GarcomStats {
+  pedidos_hoje: number
+  pedidos_semana: number
+  pedidos_mes: number
+  vendas_hoje: number
+  vendas_semana: number
+  vendas_mes: number
+  tempo_medio_atendimento: number
+  ultima_atividade?: string
+}
+
 // Utilitários de formatação
 export const formatPermissoes = (permissoes: GarcomPermissoes): string[] => {
   const labels: string[] = []

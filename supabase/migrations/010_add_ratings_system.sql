@@ -1,36 +1,35 @@
--- Criar tabela de avaliações
-CREATE TABLE IF NOT EXISTS avaliacoes (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  pedido_id UUID NOT NULL REFERENCES pedidos(id) ON DELETE CASCADE,
-  avaliador_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  avaliador_nome TEXT NOT NULL,
-  avaliado_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
-  avaliado_nome TEXT NOT NULL,
-  tipo_avaliacao TEXT NOT NULL CHECK (tipo_avaliacao IN ('empresa', 'entregador', 'consumidor')),
-  
-  -- Notas (1-5)
-  nota_geral INTEGER NOT NULL CHECK (nota_geral >= 1 AND nota_geral <= 5),
-  nota_qualidade INTEGER CHECK (nota_qualidade >= 1 AND nota_qualidade <= 5),
-  nota_atendimento INTEGER CHECK (nota_atendimento >= 1 AND nota_atendimento <= 5),
-  nota_pontualidade INTEGER CHECK (nota_pontualidade >= 1 AND nota_pontualidade <= 5),
-  nota_embalagem INTEGER CHECK (nota_embalagem >= 1 AND nota_embalagem <= 5),
-  
-  -- Feedback textual
-  comentario TEXT,
-  pontos_positivos TEXT[], -- Array de strings
-  pontos_negativos TEXT[], -- Array de strings
-  
-  -- Resposta do avaliado
-  resposta TEXT,
-  respondido_em TIMESTAMP WITH TIME ZONE,
-  
-  -- Metadata
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  
-  -- Garantir que cada usuário só pode avaliar um pedido uma vez
-  UNIQUE(pedido_id, avaliador_id)
-);
+-- Estender tabela de avaliações existente
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS avaliador_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS avaliador_nome TEXT;
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS avaliado_id UUID REFERENCES profiles(id) ON DELETE CASCADE;
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS avaliado_nome TEXT;
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS tipo_avaliacao TEXT CHECK (tipo_avaliacao IN ('empresa', 'entregador', 'consumidor'));
+
+-- Notas adicionais (1-5)
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS nota_geral INTEGER CHECK (nota_geral >= 1 AND nota_geral <= 5);
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS nota_qualidade INTEGER CHECK (nota_qualidade >= 1 AND nota_qualidade <= 5);
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS nota_atendimento INTEGER CHECK (nota_atendimento >= 1 AND nota_atendimento <= 5);
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS nota_pontualidade INTEGER CHECK (nota_pontualidade >= 1 AND nota_pontualidade <= 5);
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS nota_embalagem INTEGER CHECK (nota_embalagem >= 1 AND nota_embalagem <= 5);
+
+-- Feedback textual
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS pontos_positivos TEXT[]; -- Array de strings
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS pontos_negativos TEXT[]; -- Array de strings
+
+-- Resposta do avaliado
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS resposta TEXT;
+ALTER TABLE avaliacoes ADD COLUMN IF NOT EXISTS respondido_em TIMESTAMP WITH TIME ZONE;
+
+-- Garantir que cada usuário só pode avaliar um pedido uma vez (se não existir)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'avaliacoes_pedido_id_avaliador_id_key'
+    ) THEN
+        ALTER TABLE avaliacoes ADD CONSTRAINT avaliacoes_pedido_id_avaliador_id_key UNIQUE(pedido_id, avaliador_id);
+    END IF;
+END $$;
 
 -- Índices para melhor performance
 CREATE INDEX IF NOT EXISTS idx_avaliacoes_pedido_id ON avaliacoes(pedido_id);
@@ -59,7 +58,10 @@ CREATE POLICY "Users can create ratings for their orders" ON avaliacoes
       AND (
         (tipo_avaliacao = 'empresa' AND p.consumidor_id = auth.uid()) OR
         (tipo_avaliacao = 'entregador' AND p.consumidor_id = auth.uid()) OR
-        (tipo_avaliacao = 'consumidor' AND (p.empresa_id = auth.uid() OR p.entregador_id = auth.uid()))
+        (tipo_avaliacao = 'consumidor' AND (
+          EXISTS (SELECT 1 FROM pedido_itens pi JOIN empresas e ON pi.empresa_id = e.id WHERE pi.pedido_id = p.id AND e.profile_id = auth.uid()) OR 
+          p.entregador_id = auth.uid()
+        ))
       )
     )
   );
@@ -130,7 +132,6 @@ GROUP BY avaliado_id, avaliado_nome, tipo_avaliacao;
 CREATE OR REPLACE VIEW recent_ratings_view AS
 SELECT 
   a.*,
-  p.numero as pedido_numero,
   p.total as pedido_total,
   p.created_at as pedido_data
 FROM avaliacoes a

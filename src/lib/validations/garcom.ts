@@ -183,3 +183,54 @@ export const validateRespostaConvite = (data: unknown) => {
 export const validateEnviarConvite = (data: unknown) => {
   return enviarConviteSchema.safeParse(data)
 }
+
+// Validações específicas para permissões
+export const validatePermissoes = (permissoes: unknown) => {
+  const schema = z.object({
+    criar_pedidos: z.boolean(),
+    editar_pedidos: z.boolean(),
+    cancelar_pedidos: z.boolean()
+  })
+  
+  return schema.safeParse(permissoes)
+}
+
+// Validação para verificar se garçom pode executar ação
+export const canGarcomExecuteAction = (
+  permissoes: { criar_pedidos: boolean; editar_pedidos: boolean; cancelar_pedidos: boolean },
+  acao: 'criar_pedido' | 'editar_pedido' | 'cancelar_pedido'
+): boolean => {
+  switch (acao) {
+    case 'criar_pedido':
+      return permissoes.criar_pedidos
+    case 'editar_pedido':
+      return permissoes.editar_pedidos
+    case 'cancelar_pedido':
+      return permissoes.cancelar_pedidos
+    default:
+      return false
+  }
+}
+
+// Validação de transições de status de pedido
+export const isValidStatusTransition = (
+  statusAtual: string,
+  novoStatus: string,
+  permissoes: { criar_pedidos: boolean; editar_pedidos: boolean; cancelar_pedidos: boolean }
+): boolean => {
+  // Apenas garçons com permissão podem cancelar
+  if (novoStatus === 'cancelado') {
+    return permissoes.cancelar_pedidos
+  }
+  
+  // Outras transições seguem regras de negócio padrão
+  const validTransitions: Record<string, string[]> = {
+    'pendente': ['em_preparo', 'cancelado'],
+    'em_preparo': ['pronto', 'cancelado'],
+    'pronto': ['entregue'],
+    'entregue': [], // Status final
+    'cancelado': [] // Status final
+  }
+  
+  return validTransitions[statusAtual]?.includes(novoStatus) || false
+}
