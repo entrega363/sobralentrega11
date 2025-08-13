@@ -326,7 +326,7 @@ export default function ComandaDashboardPage() {
                 <div className="space-y-1">
                   {pedido.itens?.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
-                      <span>{item.quantidade}x {item.produto.nome}</span>
+                      <span>{item.quantidade}x {item.produto?.nome}</span>
                     </div>
                   ))}
                 </div>
