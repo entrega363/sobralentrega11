@@ -204,10 +204,10 @@ async function getConsumidorAnalytics(supabase: any, userId: string, startDate: 
     .lte('created_at', endDate.toISOString())
 
   const pedidosRealizados = pedidos?.length || 0
-  const gastoTotal = pedidos?.reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0
+  const gastoTotal = pedidos?.reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0
 
   // Restaurante favorito
-  const empresaFrequency = pedidos?.reduce((acc, p) => {
+  const empresaFrequency = pedidos?.reduce((acc: any, p: any) => {
     const nome = p.empresas?.nome || 'Desconhecido'
     acc[nome] = (acc[nome] || 0) + 1
     return acc
@@ -222,12 +222,12 @@ async function getConsumidorAnalytics(supabase: any, userId: string, startDate: 
     totalVendas: gastoTotal,
     ticketMedio: pedidosRealizados > 0 ? gastoTotal / pedidosRealizados : 0,
     crescimentoMensal: 5,
-    pedidosHoje: pedidos?.filter(p => isToday(new Date(p.created_at))).length || 0,
-    vendasHoje: pedidos?.filter(p => isToday(new Date(p.created_at)))
-      .reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
-    pedidosSemana: pedidos?.filter(p => isThisWeek(new Date(p.created_at))).length || 0,
-    vendasSemana: pedidos?.filter(p => isThisWeek(new Date(p.created_at)))
-      .reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
+    pedidosHoje: pedidos?.filter((p: any) => isToday(new Date(p.created_at))).length || 0,
+    vendasHoje: pedidos?.filter((p: any) => isToday(new Date(p.created_at)))
+      .reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
+    pedidosSemana: pedidos?.filter((p: any) => isThisWeek(new Date(p.created_at))).length || 0,
+    vendasSemana: pedidos?.filter((p: any) => isThisWeek(new Date(p.created_at)))
+      .reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
     pedidosMes: pedidosRealizados,
     vendasMes: gastoTotal,
     vendasPorDia: [],
@@ -274,11 +274,11 @@ async function getAdminAnalytics(supabase: any, startDate: Date, endDate: Date) 
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString())
 
-  const receitaPlataforma = pedidos?.reduce((sum, p) => sum + (p.taxa_plataforma || 0), 0) || 0
+  const receitaPlataforma = pedidos?.reduce((sum: number, p: any) => sum + (p.taxa_plataforma || 0), 0) || 0
 
   return {
     totalPedidos: pedidos?.length || 0,
-    totalVendas: pedidos?.reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
+    totalVendas: pedidos?.reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
     ticketMedio: 0,
     crescimentoMensal: 15,
     pedidosHoje: 0,
@@ -286,7 +286,7 @@ async function getAdminAnalytics(supabase: any, startDate: Date, endDate: Date) 
     pedidosSemana: 0,
     vendasSemana: 0,
     pedidosMes: pedidos?.length || 0,
-    vendasMes: pedidos?.reduce((sum, p) => sum + (p.valor_total || 0), 0) || 0,
+    vendasMes: pedidos?.reduce((sum: number, p: any) => sum + (p.valor_total || 0), 0) || 0,
     vendasPorDia: [],
     pedidosPorStatus: [],
     topProdutos: [],
@@ -312,7 +312,7 @@ async function getVendasPorDia(supabase: any, empresaId: string, startDate: Date
     .lte('created_at', endDate.toISOString())
     .order('created_at')
 
-  const groupedByDay = data?.reduce((acc, pedido) => {
+  const groupedByDay = data?.reduce((acc: any, pedido: any) => {
     const date = new Date(pedido.created_at).toISOString().split('T')[0]
     if (!acc[date]) {
       acc[date] = { valor: 0, pedidos: 0 }
@@ -337,12 +337,12 @@ async function getPedidosPorStatus(supabase: any, empresaId: string, startDate: 
     .gte('created_at', startDate.toISOString())
     .lte('created_at', endDate.toISOString())
 
-  const statusCount = data?.reduce((acc, pedido) => {
+  const statusCount = data?.reduce((acc: any, pedido: any) => {
     acc[pedido.status] = (acc[pedido.status] || 0) + 1
     return acc
   }, {} as Record<string, number>) || {}
 
-  const total = Object.values(statusCount).reduce((sum, count) => sum + count, 0)
+  const total = Object.values(statusCount).reduce((sum: number, count: number) => sum + count, 0)
 
   return Object.entries(statusCount).map(([status, quantidade]) => ({
     status,
@@ -388,7 +388,7 @@ async function getGanhosPorDia(supabase: any, entregadorId: string, startDate: D
     .lte('created_at', endDate.toISOString())
     .order('created_at')
 
-  const groupedByDay = data?.reduce((acc, pedido) => {
+  const groupedByDay = data?.reduce((acc: any, pedido: any) => {
     const date = new Date(pedido.created_at).toISOString().split('T')[0]
     if (!acc[date]) {
       acc[date] = { valor: 0, pedidos: 0 }
