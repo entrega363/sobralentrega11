@@ -47,13 +47,13 @@ export function AnalyticsDashboard({ userType, className }: AnalyticsDashboardPr
   if (error) {
     return (
       <EmptyState
+        icon="⚠️"
         title="Erro ao carregar analytics"
         description={error}
-        action={
-          <Button onClick={refetch}>
-            Tentar novamente
-          </Button>
-        }
+        action={{
+          label: "Tentar novamente",
+          onClick: refetch
+        }}
       />
     )
   }
