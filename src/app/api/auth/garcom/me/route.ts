@@ -88,7 +88,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Verificar se empresa ainda está ativa
-    if (!garcom.empresas.ativo) {
+    if (!(garcom.empresas as any).ativo) {
       return NextResponse.json(
         { error: GARCOM_ERRORS.EMPRESA_INATIVA },
         { status: 403 }
@@ -115,8 +115,8 @@ export async function GET(request: NextRequest) {
         nome: garcom.nome,
         usuario: garcom.usuario,
         empresa: {
-          id: garcom.empresas.id,
-          nome: garcom.empresas.nome
+          id: (garcom.empresas as any).id,
+          nome: (garcom.empresas as any).nome
         },
         permissoes: garcom.permissoes,
         ultimo_login: garcom.ultimo_login,
