@@ -322,7 +322,7 @@ async function getVendasPorDia(supabase: any, empresaId: string, startDate: Date
     return acc
   }, {} as Record<string, { valor: number; pedidos: number }>) || {}
 
-  return Object.entries(groupedByDay).map(([data, stats]) => ({
+  return Object.entries(groupedByDay).map(([data, stats]: [string, any]) => ({
     data,
     valor: stats.valor,
     pedidos: stats.pedidos
@@ -398,7 +398,7 @@ async function getGanhosPorDia(supabase: any, entregadorId: string, startDate: D
     return acc
   }, {} as Record<string, { valor: number; pedidos: number }>) || {}
 
-  return Object.entries(groupedByDay).map(([data, stats]) => ({
+  return Object.entries(groupedByDay).map(([data, stats]: [string, any]) => ({
     data,
     valor: stats.valor,
     pedidos: stats.pedidos
