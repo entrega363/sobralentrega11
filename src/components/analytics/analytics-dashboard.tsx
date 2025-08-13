@@ -61,6 +61,7 @@ export function AnalyticsDashboard({ userType, className }: AnalyticsDashboardPr
   if (!data) {
     return (
       <EmptyState
+        icon="📊"
         title="Nenhum dado disponível"
         description="Não há dados de analytics para exibir no momento."
       />
