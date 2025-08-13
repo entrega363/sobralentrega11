@@ -342,7 +342,7 @@ async function getPedidosPorStatus(supabase: any, empresaId: string, startDate: 
     return acc
   }, {} as Record<string, number>) || {}
 
-  const total = Object.values(statusCount).reduce((sum: number, count: number) => sum + count, 0)
+  const total = Object.values(statusCount).reduce((sum: number, count: unknown) => sum + (count as number), 0)
 
   return Object.entries(statusCount).map(([status, quantidade]) => ({
     status,
