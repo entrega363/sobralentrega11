@@ -347,7 +347,7 @@ async function getPedidosPorStatus(supabase: any, empresaId: string, startDate: 
   return Object.entries(statusCount).map(([status, quantidade]) => ({
     status,
     quantidade,
-    percentual: total > 0 ? (quantidade / total) * 100 : 0
+    percentual: total > 0 ? ((quantidade as number) / total) * 100 : 0
   }))
 }
 
