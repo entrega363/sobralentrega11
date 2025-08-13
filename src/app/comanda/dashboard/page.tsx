@@ -324,7 +324,7 @@ export default function ComandaDashboardPage() {
               <CardContent className="space-y-3">
                 {/* Itens */}
                 <div className="space-y-1">
-                  {pedido.itens.map((item) => (
+                  {pedido.itens?.map((item) => (
                     <div key={item.id} className="flex justify-between text-sm">
                       <span>{item.quantidade}x {item.produto.nome}</span>
                     </div>
