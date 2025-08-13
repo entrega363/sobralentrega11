@@ -116,7 +116,7 @@ export default function ComandaDashboardPage() {
 
   const handlePedidoCriado = (novoPedido: any) => {
     // Atualizar lista de pedidos
-    refetch()
+    loadPedidos()
     
     toast({
       title: 'Pedido criado!',
