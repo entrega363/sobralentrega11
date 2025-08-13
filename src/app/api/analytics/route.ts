@@ -163,12 +163,12 @@ async function getEntregadorAnalytics(supabase: any, userId: string, startDate: 
     totalVendas: totalGanhos,
     ticketMedio: entregasRealizadas > 0 ? totalGanhos / entregasRealizadas : 0,
     crescimentoMensal: 8,
-    pedidosHoje: entregas?.filter(e => isToday(new Date(e.created_at))).length || 0,
-    vendasHoje: entregas?.filter(e => isToday(new Date(e.created_at)) && e.status === 'entregue')
-      .reduce((sum, e) => sum + (e.taxa_entrega || 0), 0) || 0,
-    pedidosSemana: entregas?.filter(e => isThisWeek(new Date(e.created_at))).length || 0,
-    vendasSemana: entregas?.filter(e => isThisWeek(new Date(e.created_at)) && e.status === 'entregue')
-      .reduce((sum, e) => sum + (e.taxa_entrega || 0), 0) || 0,
+    pedidosHoje: entregas?.filter((e: any) => isToday(new Date(e.created_at))).length || 0,
+    vendasHoje: entregas?.filter((e: any) => isToday(new Date(e.created_at)) && e.status === 'entregue')
+      .reduce((sum: number, e: any) => sum + (e.taxa_entrega || 0), 0) || 0,
+    pedidosSemana: entregas?.filter((e: any) => isThisWeek(new Date(e.created_at))).length || 0,
+    vendasSemana: entregas?.filter((e: any) => isThisWeek(new Date(e.created_at)) && e.status === 'entregue')
+      .reduce((sum: number, e: any) => sum + (e.taxa_entrega || 0), 0) || 0,
     pedidosMes: entregas?.length || 0,
     vendasMes: totalGanhos,
     vendasPorDia: ganhosDiarios,
