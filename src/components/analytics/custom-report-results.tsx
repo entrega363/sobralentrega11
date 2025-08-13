@@ -52,6 +52,7 @@ export function CustomReportResults({
       <Card>
         <CardContent>
           <EmptyState
+            icon="📊"
             title="Nenhum resultado encontrado"
             description="Execute um relatório para ver os resultados aqui."
           />
