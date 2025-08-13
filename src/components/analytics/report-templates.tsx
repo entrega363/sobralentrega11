@@ -341,7 +341,8 @@ export function ReportTemplates({ userType, onUseTemplate }: ReportTemplatesProp
     template.userTypes.includes(userType)
   )
 
-  const categories = [...new Set(availableTemplates.map(t => t.category))]
+  const categoriesSet = new Set(availableTemplates.map(t => t.category))
+  const categories = Array.from(categoriesSet)
 
   return (
     <div className="space-y-6">
