@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import React from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { LucideIcon } from 'lucide-react'
 
@@ -29,7 +29,7 @@ export function StatCard({
             {typeof icon === 'string' ? (
               <span className="text-xl">{icon}</span>
             ) : (
-              <icon className={`h-5 w-5 ${iconColor}`} />
+              React.createElement(icon, { className: `h-5 w-5 ${iconColor}` })
             )}
             <div>
               <p className="text-sm text-gray-600">{title}</p>
@@ -48,7 +48,6 @@ export function StatCard({
               {change}
             </div>
           )}
-          </div>
         </div>
       </CardContent>
     </Card>
