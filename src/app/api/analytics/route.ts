@@ -152,7 +152,7 @@ async function getEntregadorAnalytics(supabase: any, userId: string, startDate: 
     .lte('created_at', endDate.toISOString())
 
   const avaliacaoEntregador = avaliacoes?.length > 0 
-    ? avaliacoes.reduce((sum, a) => sum + a.rating, 0) / avaliacoes.length 
+    ? avaliacoes.reduce((sum: number, a: any) => sum + a.rating, 0) / avaliacoes.length 
     : 0
 
   // Ganhos por dia
