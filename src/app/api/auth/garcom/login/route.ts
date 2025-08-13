@@ -128,8 +128,8 @@ export async function POST(request: NextRequest) {
         nome: garcom.nome,
         usuario: garcom.usuario,
         empresa: {
-          id: garcom.empresas.id,
-          nome: garcom.empresas.nome
+          id: (garcom.empresas as any).id,
+          nome: (garcom.empresas as any).nome
         },
         permissoes: garcom.permissoes,
         ultimo_login: agora
