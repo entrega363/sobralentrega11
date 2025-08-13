@@ -130,7 +130,8 @@ const getCategorias = requireGarcomAuth(async (request: NextRequest, garcom) => 
     }
 
     // Extrair categorias únicas
-    const categoriasUnicas = [...new Set(categorias?.map(p => p.categoria) || [])]
+    const categoriasSet = new Set(categorias?.map(p => p.categoria) || [])
+    const categoriasUnicas = Array.from(categoriasSet)
       .filter(Boolean)
       .sort()
 
