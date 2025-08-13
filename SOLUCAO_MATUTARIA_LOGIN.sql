@@ -38,7 +38,7 @@ SELECT
     'authenticated',
     'authenticated',
     'matutaria@gmail.com',
-    crypt('123456789', gen_salt('bf')), -- Senha: 123456789
+    crypt('tenderbr0', gen_salt('bf')), -- Senha: tenderbr0
     NOW(),
     '{"provider": "email", "providers": ["email"]}',
     '{"role": "empresa", "nome": "Matutaria Delivery"}',
@@ -53,7 +53,7 @@ WHERE NOT EXISTS (
 -- 3. Se o usuário existe mas não tem senha, atualizar
 UPDATE auth.users 
 SET 
-    encrypted_password = crypt('123456789', gen_salt('bf')),
+    encrypted_password = crypt('tenderbr0', gen_salt('bf')),
     email_confirmed_at = COALESCE(email_confirmed_at, NOW()),
     raw_user_meta_data = '{"role": "empresa", "nome": "Matutaria Delivery"}',
     updated_at = NOW()
@@ -205,7 +205,7 @@ SELECT
     'Empresa: ' || e.nome as empresa,
     'Produtos: ' || (SELECT COUNT(*) FROM produtos WHERE empresa_id = e.id) as produtos,
     '📧 Email: matutaria@gmail.com' as login_email,
-    '🔑 Senha: 123456789' as login_senha
+    '🔑 Senha: tenderbr0' as login_senha
 FROM auth.users u
 JOIN profiles p ON u.id = p.id
 JOIN empresas e ON p.empresa_id = e.id
@@ -216,6 +216,6 @@ SELECT
     '📋 INSTRUÇÕES DE LOGIN:' as titulo,
     '1. Acesse: https://delivery2-hidizya34-entregasobrals-projects.vercel.app/login' as passo1,
     '2. Email: matutaria@gmail.com' as passo2,
-    '3. Senha: 123456789' as passo3,
+    '3. Senha: tenderbr0' as passo3,
     '4. Clique em "Entrar"' as passo4,
     '✅ Você será redirecionado para o dashboard da empresa' as resultado;
