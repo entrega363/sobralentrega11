@@ -8,13 +8,11 @@ const statusUpdateSchema = z.object({
   motivo: z.string().optional(),
 })
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
-
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
   try {
     const supabase = createRouteHandlerClient()
     
@@ -43,7 +41,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { data: empresaAtual, error: fetchError } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('role', 'empresa')
       .single()
 
@@ -76,7 +74,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { data, error } = await supabase
       .from('profiles')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', id)
       .eq('role', 'empresa')
       .select()
       .single()
@@ -89,7 +87,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .insert({
         admin_id: session.user.id,
         action: 'update_empresa_status',
-        target_id: params.id,
+        target_id: id,
         details: {
           old_status: empresaAtual.status,
           new_status: validatedData.status,
