@@ -3,14 +3,14 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { produtoSchema } from '@/lib/validations/produto'
 import { handleApiError, createSuccessResponse } from '@/lib/api-utils'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 
-export async function GET(request: NextRequest, { params }: RouteParams) {
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const resolvedParams = await params
     const supabase = createRouteHandlerClient()
     
     const { data, error } = await supabase
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           configuracoes
         )
       `)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (error) throw error
@@ -39,8 +39,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const resolvedParams = await params
     const supabase = createRouteHandlerClient()
     
     // Verificar autenticação
@@ -75,7 +79,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { data: produto } = await supabase
       .from('produtos')
       .select('empresa_id')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (!produto) {
@@ -94,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { data, error } = await supabase
       .from('produtos')
       .update(validatedData)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .select(`
         *,
         empresas (
@@ -114,8 +118,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const resolvedParams = await params
     const supabase = createRouteHandlerClient()
     
     // Verificar autenticação
@@ -150,7 +158,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { data: produto } = await supabase
       .from('produtos')
       .select('empresa_id')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (!produto) {
@@ -165,7 +173,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error } = await supabase
       .from('produtos')
       .delete()
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
 
     if (error) throw error
 

@@ -3,11 +3,12 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const { resposta } = await request.json()
-    const ratingId = params.id
+    const ratingId = resolvedParams.id
 
     if (!resposta || !resposta.trim()) {
       return NextResponse.json(

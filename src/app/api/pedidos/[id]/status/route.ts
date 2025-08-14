@@ -3,14 +3,14 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 import { pedidoStatusUpdateSchema } from '@/lib/validations/pedido'
 import { handleApiError, createSuccessResponse } from '@/lib/api-utils'
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const resolvedParams = await params
     const supabase = createRouteHandlerClient()
     
     // Verificar autenticação
@@ -34,7 +34,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const body = await request.json()
     const validatedData = pedidoStatusUpdateSchema.parse({
       ...body,
-      id: params.id
+      id: resolvedParams.id
     })
 
     // Buscar pedido atual
@@ -46,7 +46,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           empresa_id
         )
       `)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (fetchError) throw fetchError
@@ -132,7 +132,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data, error } = await supabase
       .from('pedidos')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .select(`
         *,
         consumidores (

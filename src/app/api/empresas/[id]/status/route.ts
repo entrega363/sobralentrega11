@@ -8,14 +8,14 @@ const statusUpdateSchema = z.object({
   motivo: z.string().optional(),
 })
 
-interface RouteParams {
-  params: {
-    id: string
-  }
-}
 
-export async function PATCH(request: NextRequest, { params }: RouteParams) {
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const resolvedParams = await params
     const supabase = createRouteHandlerClient()
     
     // Verificar autenticação
@@ -43,7 +43,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data: empresaAtual, error: fetchError } = await supabase
       .from('empresas')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .single()
 
     if (fetchError) throw fetchError
@@ -73,7 +73,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const { data, error } = await supabase
       .from('empresas')
       .update(updateData)
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .select()
       .single()
 

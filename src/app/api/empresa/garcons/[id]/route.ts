@@ -9,11 +9,12 @@ export const runtime = 'nodejs'
 // PUT - Atualizar garçom
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const body = await request.json()
-    const garcomId = params.id
+    const garcomId = resolvedParams.id
     
     // Validar dados de entrada
     const validation = validateAtualizarGarcom(body)
@@ -171,10 +172,11 @@ export async function PUT(
 // DELETE - Desativar garçom (soft delete)
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const garcomId = params.id
+    const resolvedParams = await params
+    const garcomId = resolvedParams.id
     const supabase = createClient()
 
     // Verificar autenticação da empresa

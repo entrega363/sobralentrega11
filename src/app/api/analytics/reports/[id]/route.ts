@@ -3,9 +3,10 @@ import { createClient } from '@/lib/supabase/server'
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -16,7 +17,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('saved_reports')
       .delete()
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .eq('user_id', user.id) // Garantir que o usuário só pode deletar seus próprios relatórios
 
     if (error) throw error
@@ -30,9 +31,10 @@ export async function DELETE(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const resolvedParams = await params
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -43,7 +45,7 @@ export async function GET(
     const { data: report, error } = await supabase
       .from('saved_reports')
       .select('*')
-      .eq('id', params.id)
+      .eq('id', resolvedParams.id)
       .eq('user_id', user.id)
       .single()
 
