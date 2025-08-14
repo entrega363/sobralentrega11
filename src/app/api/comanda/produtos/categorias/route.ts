@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 // GET /api/comanda/produtos/categorias - Listar categorias disponíveis
 export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: produtos, error } = await supabase
       .from('produtos')

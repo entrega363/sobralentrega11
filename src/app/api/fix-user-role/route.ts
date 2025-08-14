@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Get the email from query params
     const { searchParams } = new URL(request.url)

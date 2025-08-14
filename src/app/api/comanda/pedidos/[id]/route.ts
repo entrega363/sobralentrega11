@@ -33,7 +33,7 @@ export const PUT = requireGarcomAuth(async (request: NextRequest, garcom) => {
     }
 
     const { observacoes_garcom, status } = validation.data
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar se o pedido existe e pertence ao garçom
     const { data: pedidoExistente, error: pedidoError } = await supabase
@@ -198,7 +198,7 @@ export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Buscar pedido com itens
     const { data: pedido, error } = await supabase

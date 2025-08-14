@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     // Buscar subscriptions do usuário ou de todos os usuários de um tipo
     let query = supabase

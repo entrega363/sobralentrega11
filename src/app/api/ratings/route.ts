@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get('type')
     const pedidoId = searchParams.get('pedidoId')
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     let query = supabase
       .from('avaliacoes')
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     // Verificar se o usuário já avaliou este pedido
     const { data: existingRating } = await supabase

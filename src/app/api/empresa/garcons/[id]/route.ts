@@ -29,7 +29,7 @@ export async function PUT(
     }
 
     const { nome, usuario, senha, permissoes, ativo } = validation.data
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar autenticação da empresa
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -177,7 +177,7 @@ export async function DELETE(
   try {
     const resolvedParams = await params
     const garcomId = resolvedParams.id
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar autenticação da empresa
     const { data: { user }, error: authError } = await supabase.auth.getUser()

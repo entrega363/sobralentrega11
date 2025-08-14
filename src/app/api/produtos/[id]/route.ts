@@ -11,7 +11,7 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     const { data, error } = await supabase
       .from('produtos')
@@ -45,7 +45,7 @@ export async function PUT(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()
@@ -124,7 +124,7 @@ export async function DELETE(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()

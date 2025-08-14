@@ -8,7 +8,7 @@ export const runtime = 'nodejs'
 // GET /api/comanda/pedidos - Listar pedidos do garçom
 export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     
     // Buscar pedidos do garçom
     const { data: pedidos, error } = await supabase
@@ -89,7 +89,7 @@ export const POST = requireGarcomAuth(async (request: NextRequest, garcom) => {
     }
 
     const { produtos, mesa, cliente_nome, observacoes_garcom } = validation.data
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar se os produtos existem e pertencem à empresa do garçom
     const produtoIds = produtos.map(p => p.produto_id)

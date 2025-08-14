@@ -17,7 +17,7 @@ export async function POST(
       )
     }
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     // Verificar se a avaliação existe
     const { data: rating, error: ratingError } = await supabase

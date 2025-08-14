@@ -11,7 +11,7 @@ export async function PATCH(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()

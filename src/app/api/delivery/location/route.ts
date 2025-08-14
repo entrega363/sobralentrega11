@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     // Verificar se o usuário é realmente o entregador do pedido
     const { data: pedido, error: pedidoError } = await supabase
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
 
     // Buscar localização mais recente do entregador para este pedido
     const { data: location, error } = await supabase

@@ -19,7 +19,7 @@ const configuracaoSchema = z.object({
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()

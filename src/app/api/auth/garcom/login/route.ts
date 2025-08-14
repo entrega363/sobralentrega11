@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { usuario, senha } = validation.data
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Buscar garçom pelo usuário
     const { data: garcom, error: garcomError } = await supabase

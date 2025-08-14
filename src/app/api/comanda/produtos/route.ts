@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 // GET /api/comanda/produtos - Listar produtos da empresa do garçom
 export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
     const url = new URL(request.url)
     
     // Parâmetros de consulta
@@ -113,7 +113,7 @@ export const GET = requireGarcomAuth(async (request: NextRequest, garcom) => {
 // Função auxiliar para categorias (não é um export de rota)
 const getCategorias = requireGarcomAuth(async (request: NextRequest, garcom) => {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     const { data: categorias, error } = await supabase
       .from('produtos')

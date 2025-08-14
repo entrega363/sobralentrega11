@@ -14,7 +14,7 @@ export async function PUT(
 ) {
   const { id } = await params
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()

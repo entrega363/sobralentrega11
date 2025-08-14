@@ -4,7 +4,7 @@ import { handleApiError, createSuccessResponse } from '@/lib/api-utils'
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient()
+    const supabase = await createRouteHandlerClient()
     
     // Verificar autenticação
     const { data: { session } } = await supabase.auth.getSession()

@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
 // GET - Listar garçons da empresa
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar autenticação da empresa
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { nome, usuario, senha, permissoes } = validation.data
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Verificar autenticação da empresa
     const { data: { user }, error: authError } = await supabase.auth.getUser()

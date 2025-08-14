@@ -7,7 +7,7 @@ export async function DELETE(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -35,7 +35,7 @@ export async function GET(
 ) {
   try {
     const resolvedParams = await params
-    const supabase = createClient()
+    const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {

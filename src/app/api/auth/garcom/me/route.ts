@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Buscar dados atualizados do garçom
     const { data: garcom, error: garcomError } = await supabase
