@@ -29,7 +29,8 @@
 
 
 
-- [ ] 3. Implementar sistema de autenticação com Supabase Auth
+- [-] 3. Implementar sistema de autenticação com Supabase Auth
+
   - Configurar Supabase Auth com diferentes tipos de usuário (roles)
   - Criar middleware de autenticação para proteção de rotas
 
@@ -111,7 +112,12 @@
 
 
 
-- [ ] 13. Deploy e configuração final no Vercel
+
+
+- [x] 13. Deploy e configuração final no Vercel
+
+
+
   - Configurar projeto no Vercel com settings otimizados
   - Configurar domínio customizado e certificado SSL
   - Testar deploy em ambiente de produção
