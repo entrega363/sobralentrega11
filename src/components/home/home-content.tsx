@@ -69,8 +69,7 @@ export function HomeContent() {
               </Button>
               <Button 
                 size="lg" 
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 font-semibold px-8 py-3 text-lg"
+                className="bg-green-600 text-white hover:bg-green-700 font-semibold px-8 py-3 text-lg"
                 onClick={() => window.location.href = '/register'}
               >
                 Cadastrar-se

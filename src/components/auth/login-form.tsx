@@ -54,7 +54,39 @@ export function LoginForm() {
         description: 'Bem-vindo de volta.',
       })
 
-      // Redirect will happen automatically via auth state change
+      // Force redirect after successful login
+      setTimeout(async () => {
+        try {
+          const response = await fetch('/api/force-redirect', {
+            method: 'POST'
+          })
+          
+          const result = await response.json()
+          
+          if (result.success && result.redirectUrl) {
+            console.log('Redirecionando para:', result.redirectUrl)
+            router.push(result.redirectUrl)
+          } else {
+            console.error('Erro no redirecionamento:', result.error)
+            // Fallback: try to redirect based on current auth state
+            if (userRole) {
+              const fallbackPath = {
+                admin: '/admin',
+                empresa: '/empresa',
+                entregador: '/entregador',
+                consumidor: '/consumidor',
+              }[userRole]
+              
+              if (fallbackPath) {
+                router.push(fallbackPath)
+              }
+            }
+          }
+        } catch (redirectError) {
+          console.error('Erro ao forçar redirecionamento:', redirectError)
+        }
+      }, 1000) // Wait 1 second for auth state to update
+
     } catch (error: any) {
       console.error('Login error:', error)
       

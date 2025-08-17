@@ -172,78 +172,61 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, userData: any) => {
     setLoading(true)
     
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: userData,
-        },
-      })
-
-      if (error) throw error
-
-      // If user was created successfully, update their profile with correct role
-      if (data.user && userData.role) {
-        // Wait a bit for the trigger to create the profile
-        setTimeout(async () => {
-          try {
-            const { error: profileError } = await supabase
-              .from('profiles')
-              .update({ 
-                role: userData.role,
-                nome: userData.nome || email
-              })
-              .eq('id', data.user!.id)
-
-            if (profileError) {
-              console.error('Error updating profile role:', profileError)
-            }
-
-            // Create specific role record
-            if (userData.role === 'empresa') {
-              await supabase.from('empresas').insert({
-                profile_id: data.user!.id,
-                nome: userData.nome,
-                cnpj: userData.cnpj,
-                categoria: userData.categoria,
-                responsavel: userData.responsavel,
-                telefone: userData.telefone,
-                endereco: userData.endereco,
-                status: 'pendente'
-              })
-            } else if (userData.role === 'entregador') {
-              await supabase.from('entregadores').insert({
-                profile_id: data.user!.id,
-                nome: userData.nome,
-                cpf: userData.cpf,
-                contato: {
-                  telefone: userData.telefone,
-                  cnh: userData.cnh
-                },
-                veiculo: userData.veiculo,
-                endereco: userData.endereco,
-                status: 'pendente'
-              })
-            } else if (userData.role === 'consumidor') {
-              await supabase.from('consumidores').insert({
-                profile_id: data.user!.id,
-                nome: userData.nome,
-                telefone: userData.telefone,
-                endereco: userData.endereco
-              })
-            }
-          } catch (error) {
-            console.error('Error creating role-specific record:', error)
+    const maxRetries = 3
+    const baseDelay = 1000 // 1 second
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        console.log(`Tentativa de cadastro ${attempt}/${maxRetries}...`)
+        
+        // Use our robust signup API endpoint instead of direct Supabase auth
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            ...userData,
+          }),
+        })
+        
+        const result = await response.json()
+        
+        if (!response.ok || !result.success) {
+          // Check if it's a retryable error
+          const isRetryable = response.status >= 500 || 
+                             result.error?.includes('timeout') ||
+                             result.error?.includes('connection') ||
+                             result.error?.includes('network')
+          
+          if (!isRetryable || attempt === maxRetries) {
+            throw new Error(result.error || 'Erro no cadastro')
           }
-        }, 1000)
+          
+          // Wait before retry with exponential backoff
+          const delay = baseDelay * Math.pow(2, attempt - 1)
+          console.log(`Erro temporário, tentando novamente em ${delay}ms...`)
+          await new Promise(resolve => setTimeout(resolve, delay))
+          continue
+        }
+        
+        console.log('✅ Cadastro realizado com sucesso:', result.user)
+        setLoading(false)
+        return // Success, exit the retry loop
+        
+      } catch (error) {
+        if (attempt === maxRetries) {
+          setLoading(false)
+          throw error
+        }
+        
+        // Wait before retry
+        const delay = baseDelay * Math.pow(2, attempt - 1)
+        console.log(`Erro na tentativa ${attempt}, tentando novamente em ${delay}ms...`)
+        await new Promise(resolve => setTimeout(resolve, delay))
       }
-
-      // If email confirmation is disabled, profile will be created automatically
-      // Otherwise, user needs to confirm email first
-    } catch (error) {
-      setLoading(false)
-      throw error
     }
   }
 

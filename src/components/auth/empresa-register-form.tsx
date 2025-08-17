@@ -38,6 +38,8 @@ export function EmpresaRegisterForm() {
     setIsLoading(true)
     
     try {
+      console.log('🔄 Iniciando cadastro de empresa...')
+      
       await signUp(data.email, data.password, {
         role: 'empresa',
         nome: data.nome,
@@ -48,18 +50,39 @@ export function EmpresaRegisterForm() {
         endereco: data.endereco,
       })
       
-      toast({
-        title: 'Cadastro realizado com sucesso!',
-        description: 'Sua empresa será analisada e você receberá um email quando for aprovada.',
-      })
-
-      router.push('/login')
-    } catch (error: any) {
-      console.error('Register error:', error)
+      console.log('✅ Cadastro concluído com sucesso!')
       
       toast({
-        title: 'Erro no cadastro',
-        description: error.message || 'Erro ao criar conta',
+        title: '🎉 Cadastro realizado com sucesso!',
+        description: 'Sua empresa foi cadastrada e será analisada pela nossa equipe. Você receberá um email quando for aprovada.',
+      })
+
+      // Redirect to login after a short delay to show the success message
+      setTimeout(() => {
+        router.push('/login?message=cadastro-sucesso')
+      }, 2000)
+      
+    } catch (error: any) {
+      console.error('❌ Erro no cadastro:', error)
+      
+      // Provide more specific error messages
+      let errorMessage = 'Erro ao criar conta. Tente novamente.'
+      
+      if (error.message?.includes('Email já está em uso')) {
+        errorMessage = 'Este email já está cadastrado. Tente fazer login ou use outro email.'
+      } else if (error.message?.includes('CNPJ')) {
+        errorMessage = 'CNPJ inválido ou já cadastrado.'
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage = 'Erro de conexão. Verifique sua internet e tente novamente.'
+      } else if (error.message?.includes('timeout')) {
+        errorMessage = 'Operação demorou muito. Tente novamente.'
+      } else if (error.message) {
+        errorMessage = error.message
+      }
+      
+      toast({
+        title: '❌ Erro no cadastro',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {
@@ -257,8 +280,14 @@ export function EmpresaRegisterForm() {
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Cadastrar empresa
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Criando conta...
+          </>
+        ) : (
+          'Cadastrar empresa'
+        )}
       </Button>
 
       <div className="text-sm text-muted-foreground">
