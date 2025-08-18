@@ -66,7 +66,7 @@ export function HomeContent() {
               </Button>
             </div>
             <p className="text-white/80 text-sm">
-              Versão 2.0 - Powered by Next.js & Supabase
+              Versão 2.1 - Powered by Next.js & Supabase
             </p>
           </div>
         </div>
