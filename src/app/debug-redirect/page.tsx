@@ -47,9 +47,9 @@ export default function DebugRedirectPage() {
           authSelectors,
           timestamp: new Date().toISOString(),
         })
-      } catch (error) {
+      } catch (error: any) {
         console.error('Debug fetch error:', error)
-        setDebugInfo({ error: error.message })
+        setDebugInfo({ error: error.message || 'Erro desconhecido' })
       } finally {
         setIsLoading(false)
       }
@@ -61,12 +61,14 @@ export default function DebugRedirectPage() {
   const handleManualRedirect = () => {
     const role = debugInfo?.profile?.role || authSelectors.userRole
     
-    const redirectPath = {
+    const redirectMap: Record<string, string> = {
       admin: '/admin',
       empresa: '/empresa',
       entregador: '/entregador',
       consumidor: '/consumidor',
-    }[role]
+    }
+    
+    const redirectPath = redirectMap[role as string]
     
     if (redirectPath) {
       router.push(redirectPath)
@@ -96,8 +98,8 @@ export default function DebugRedirectPage() {
           window.location.reload()
         }
       }
-    } catch (error) {
-      alert('Erro: ' + error.message)
+    } catch (error: any) {
+      alert('Erro: ' + (error.message || 'Erro desconhecido'))
     } finally {
       setIsLoading(false)
     }

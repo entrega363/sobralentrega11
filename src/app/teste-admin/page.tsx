@@ -42,8 +42,8 @@ export default function TesteAdminPage() {
           }, 2000)
         }
 
-      } catch (error) {
-        setInfo({ error: error.message })
+      } catch (error: any) {
+        setInfo({ error: error.message || 'Erro desconhecido' })
       } finally {
         setLoading(false)
       }

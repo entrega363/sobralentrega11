@@ -16,7 +16,7 @@ export function HomeContent() {
             Conectando empresas, entregadores e consumidores de forma simples e eficiente.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
               <CardHeader>
                 <div className="text-3xl mb-2">🏢</div>
@@ -43,16 +43,6 @@ export function HomeContent() {
                 <CardTitle>Consumidores</CardTitle>
                 <CardDescription className="text-white/80">
                   Peça sua comida favorita com facilidade
-                </CardDescription>
-              </CardHeader>
-            </Card>
-            
-            <Card className="bg-white/10 backdrop-blur-sm border-white/20 text-white">
-              <CardHeader>
-                <div className="text-3xl mb-2">⚙️</div>
-                <CardTitle>Administração</CardTitle>
-                <CardDescription className="text-white/80">
-                  Gerencie todo o sistema
                 </CardDescription>
               </CardHeader>
             </Card>
